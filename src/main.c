@@ -19,8 +19,10 @@ int main(void)
 
         if(current == SOUTH_P) {
             line = 1;
-        } else {
+        } else if (current == NORTH_P) {
             line = 6;
+        } else {
+            print_error("Aucun joueur n'a été défini.");
         }
         
         do {
@@ -30,10 +32,10 @@ int main(void)
 
             piece = get_piece_size(game, line, column);
 
-            if(piece == NONE) {
+            if(piece != NONE) {
                 print_error("Une piece est déjà placée à cet emplacement!");
             }
-        } while(piece == NONE);
+        } while(piece != NONE);
 
         place_piece(game, size_p, current, column);
     }
