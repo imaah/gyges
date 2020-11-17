@@ -11,10 +11,12 @@ int read_digit_with_quit(const char *prompt);
 void print_error(const char *error);
 bool confirm_quit();
 void show_board();
-void announce_turn(player player)
+void announce_turn(player player);
 void announce_winner(player winner);
 void print_error(const char *error);
 int get_column();
-size get_line();
+int get_line();
+void change_player(player * current);
+size get_size();
 
 #endif /* _BOARD_H_ */

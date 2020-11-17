@@ -17,5 +17,10 @@ main.o: main.c
 input_output.o: input_output.c
 	$(CC) $(FLAGS) input_output.c
 
+debug: main.c
+	$(CC) $(FLAGS) main.c -DDEBUG
+	$(CC) $(FLAGS) input_output.c
+	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+
 clean:
 	rm -f $(OUT) $(TODEL)
