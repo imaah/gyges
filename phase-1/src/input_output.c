@@ -78,76 +78,58 @@ int read_digit_with_quit(const char *prompt)
 
 char read_dir_char(const char *prompt)
 {
-	printf("%s", prompt);
 	char bin;
 
 	int validInput;
-	const char *validDirections = "NSWE";
-	char dir;
+	char input;
+	direction dir;
 
-	validInput = scanf(" %c", &dir);
-
-	if (validInput)
+	do
 	{
-		switch (dir)
+		printf("%s", prompt);
+		validInput = scanf("%s", &input);
+
+		if (validInput)
 		{
-		case 'N':
-			return NORTH;
-			break;
+			input = toupper(input);
 
-		case 'S':
-			return SOUTH;
-			break;
-		case 'O':
-			return WEST;
-			break;
-
-		case 'E':
-			return EAST;
-			break;
-		default:
-			read_dir_char(prompt);
+			if (strcmp(&input, "N"))
+			{
+				dir = NORTH;
+			}
+			else if (strcmp(&input, "S"))
+			{
+				dir = SOUTH;
+			}
+			else if (strcmp(&input, "E"))
+			{
+				dir = EAST;
+			}
+			else if (strcmp(&input, "O"))
+			{
+				dir = WEST;
+			}
+			else if (strcmp(&input, "B"))
+			{
+				dir = GOAL;
+			}
+			else
+			{
+				validInput = 0;
+			}
 		}
-	}
-	else
-	{
-		scanf("%s", &bin);
-	}
+		else
+		{
+			scanf("%s", &bin);
+		}
+	} while (!validInput);
 
-	// for (int i = 0; i < sizeof(validDirections) / sizeof(dir); i++)
-	// {
-	// 	if (dir == validDirections[i])
-	// 	{
-	// 		switch (dir)
-	// 		{
-	// 		case 'N':
-	// 			return NORTH;
-	// 			break;
-
-	// 		case 'S':
-	// 			return SOUTH;
-	// 			break;
-	// 		case 'O':
-	// 			return WEST;
-	// 			break;
-
-	// 		case 'E':
-	// 			return EAST;
-	// 			break;
-	// 		}
-	// 	}
-	// 	else
-	// 	{
-	// 		read_dir_char(prompt);
-	// 	}
-	// }
-
-	// return dir;
-};
+	return dir;
+}
 
 void print_error(const char *error)
 {
-	printf("\033[1;31mERREUR :\033[0m\n\033[0;31m%s\033[0m", error);
+	printf("\n\033[1;31mERREUR :\033[0m\n\033[0;31m%s\033[0m\n", error);
 }
 
 bool confirm_quit()
@@ -217,11 +199,11 @@ void show_board(board game)
 
 	printf("     \e[1;34mN\e[0m\n");
 	printf("/ / / \\ \\ \\\n");
-	for (int y = 5; y >= 0; y--)
+	for (int y = 0; y < 6; y++)
 	{
-		for (int x = 1; x < 7; x++)
+		for (int x = 0; x < 6; x++)
 		{
-			size piece = get_piece_size(game, y, x);
+			size piece = get_piece_size(game, 5 - y, x);
 
 			if (piece == NONE)
 			{
@@ -232,13 +214,13 @@ void show_board(board game)
 				printf("\e[1;32m%d\e[0m", piece);
 			}
 
-			if (x != 6)
+			if (x != 5)
 			{
 				printf("-");
 			}
 		}
 		printf("\n");
-		if (y != 0)
+		if (y != 5)
 		{
 			printf("| | | | | |\n");
 		}
@@ -282,12 +264,12 @@ void change_player(player *current)
 
 int get_line()
 {
-	return read_number("Sur quelle ligne voulez-vous jouer? ", 1, 6) - 1;
+	return read_number("Sur quelle ligne voulez-vous jouer (entre 1 et 6) ? ", 1, 6) - 1;
 }
 
 int get_column()
 {
-	return read_number("Sur quelle colonne voulez-vous jouer? ", 1, 6);
+	return read_number("Sur quelle colonne voulez-vous jouer (entre 1 et 6) ? ", 1, 6) - 1;
 }
 
 size get_size()

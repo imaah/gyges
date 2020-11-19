@@ -3,6 +3,7 @@ TODEL  = main.o input_output.o
 SOURCE = main.c input_output.c 
 HEADER = input_output.h board.h
 OUT    = gyges
+DOUT   = test-gyges
 CC     = gcc
 FLAGS  = -g -c -Wall
 # -g option enables debugging mode 
@@ -17,10 +18,10 @@ main.o: main.c
 input_output.o: input_output.c
 	$(CC) $(FLAGS) input_output.c
 
-debug: main.c
-	$(CC) $(FLAGS) main.c -DDEBUG
+test: main.c
+	$(CC) $(FLAGS) main.c -DTEST
 	$(CC) $(FLAGS) input_output.c
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) -g $(OBJS) -o $(DOUT) $(LFLAGS)
 
 clean:
 	rm -f $(OUT) $(TODEL)

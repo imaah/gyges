@@ -4,16 +4,13 @@
 #include "board.h"
 #include "input_output.h"
 
-#ifdef DEBUG
+#ifdef TEST
 
 int main(void)
 {
-    board game = new_game();
+    direction dir = read_dir_char("(N/S/E/O), l'arrivée (B)");
 
-    place_piece(game, TWO, SOUTH_P, 5);
-    place_piece(game, THREE, NORTH_P, 1);
-
-    show_board(game);
+    printf("%d", dir);
 
     return 0;
 }
@@ -30,14 +27,13 @@ int main(void)
         size size_p;
         bool success = false;
 
-        printf("%d/12\n", i);
+        printf("\n\n\e[0;31m%d\e[0m/12\n", i);
         announce_turn(current);
         show_board(game);
         
         do {
             return_code code;
 
-            printf("Choisissez une colonne (entre 1 et 6)");
             column = get_column();
             size_p = get_size();
             code = place_piece(game, size_p, current, column);
@@ -46,6 +42,8 @@ int main(void)
                 print_error("Une pièce est déjà placée à cet emplacement!");
             } else if(code == FORBIDDEN) {
                 print_error("Vous avez déjà placez toutes vos pièces de cette taille!");
+            } else if(code == PARAM) {
+                print_error("Mauvais paramètre!");
             } else {
                 success = true;
             }
@@ -57,8 +55,8 @@ int main(void)
     printf("Début du jeu\n");
 
     while(running) {
-        show_board(game);
         announce_turn(current);
+        show_board(game);
 
         direction dir = NORTH;
         

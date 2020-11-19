@@ -12,6 +12,7 @@ void print_error(const char *error);
 bool confirm_quit();
 void show_board();
 void announce_turn(player player);
+char read_dir_char(const char *prompt);
 void announce_winner(player winner);
 void print_error(const char *error);
 int get_column();
