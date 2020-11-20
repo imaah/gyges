@@ -8,11 +8,22 @@
 
 int main(void)
 {
-    direction dir = read_dir_char("(N/S/E/O), l'arrivée (B)");
+    board game = new_game();
 
-    printf("%d", dir);
+    for(int i = 0; i < 6; i++) {
+        place_piece(game, (int) (i / 2) + 1, NORTH_P, i);
+        place_piece(game, (int) (i / 2) + 1, SOUTH_P, i);
+    }
 
-    return 0;
+    show_board(game);
+
+    pick_piece(game, NORTH_P, 5, 3);
+
+    show_board(game);
+
+    move_piece(game, SOUTH);
+
+    show_board(game);
 }
 
 #else
@@ -43,7 +54,7 @@ int main(void)
             } else if(code == FORBIDDEN) {
                 print_error("Vous avez déjà placez toutes vos pièces de cette taille!");
             } else if(code == PARAM) {
-                print_error("Mauvais paramètre!");
+                print_error("Mauvais paramètre !");
             } else {
                 success = true;
             }
@@ -57,13 +68,34 @@ int main(void)
     while(running) {
         announce_turn(current);
         show_board(game);
-
-        direction dir = NORTH;
+        direction dir;
         
+        bool success = false;
+        int picked_line;
+        int picked_column;
+
         do {
+            return_code code;
+            picked_line = get_line();
+            picked_column = get_column();
+
+            code = pick_piece(game, current, picked_line, picked_column);
+
+            if(code == EMPTY) {
+                print_error("La case ciblée est vide!");
+            } else if(code == FORBIDDEN) {
+                print_error("Vous ne pouvez pas déplacer cette pièce!");
+            } else if(code == PARAM) {
+                print_error("Mauvais paramètre!");
+            } else {
+                success = true;
+            }
+        } while(!success);
 
 
 
+        do {
+            dir = get_direction();
         } while (!is_move_possible(game, dir));
 
     }

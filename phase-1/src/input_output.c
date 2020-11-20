@@ -76,7 +76,7 @@ int read_digit_with_quit(const char *prompt)
 	return in;
 }
 
-char read_dir_char(const char *prompt)
+direction read_direction(const char *prompt)
 {
 	char bin;
 
@@ -196,6 +196,9 @@ char *get_piece(player player, size size)
 
 void show_board(board game)
 {
+	int p_line = picked_piece_line(game);
+	int p_column = picked_piece_column(game);
+	player p_owner = picked_piece_owner(game);
 
 	printf("     \e[1;34mN\e[0m\n");
 	printf("/ / / \\ \\ \\\n");
@@ -204,14 +207,18 @@ void show_board(board game)
 		for (int x = 0; x < 6; x++)
 		{
 			size piece = get_piece_size(game, 5 - y, x);
-
-			if (piece == NONE)
+			
+			if(5 - y == p_line && x == p_column && p_owner != NO_PLAYER) {
+				if(p_owner == NORTH_P) {
+					printf("\e[1;34m•\e[0m");
+				} else {
+					printf("\e[1;33m•\e[0m");
+				}
+			} else if (piece == NONE)
 			{
 				printf("o");
-			}
-			else
-			{
-				printf("\e[1;32m%d\e[0m", piece);
+			} else {
+				printf("\e[0;32m%d\e[0m", piece);
 			}
 
 			if (x != 5)
@@ -277,9 +284,9 @@ size get_size()
 	return read_number("Quelle taille de pièce voulez-vous jouer?\n(1/2/3) ", 1, 3);
 }
 
-char get_direction()
+direction get_direction()
 {
-	return read_dir_char("Choisissez une direction (N,S,E,O), l'arrivée (B))");
+	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ");
 }
 
 /*
