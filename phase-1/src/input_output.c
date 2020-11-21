@@ -34,7 +34,7 @@ int read_number(const char *prompt, int min, int max)
 
 	do
 	{
-		printf("\n%s", prompt);
+		printf("%s", prompt);
 
 		validInput = scanf("%d", &in);
 		if (!validInput)

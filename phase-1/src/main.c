@@ -4,6 +4,50 @@
 #include "board.h"
 #include "input_output.h"
 
+bool in_grid(int line, int column)
+{
+    if (0 <= line && line <= DIMENSION - 1)
+    {
+        if (0 <= column && column <= DIMENSION - 1)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool has_possible_move(board game, int line, int column)
+{
+    int empty_cells = 0;
+
+    if (in_grid(line, column))
+    {
+        for (int y = -1; y < 2; y++)
+        {
+            for (int x = -1; x < 2; x++)
+            {
+                if (x == y || -x == y)
+                    continue;
+
+                if (in_grid(line + y, column + x))
+                {
+                    if (get_piece_size(game, line + y, column + x) == NONE)
+                    {
+                        empty_cells++;
+                    }
+                }
+            }
+        }
+    }
+    printf("%d", empty_cells);
+    if (empty_cells > 0)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 #ifdef TEST
 
 int main(void)
@@ -135,8 +179,8 @@ int main(void)
 
     while (running)
     {
-        announce_turn(current);
         show_board(game);
+        announce_turn(current);
 
         bool success = false;
         int picked_line;
@@ -150,25 +194,33 @@ int main(void)
             picked_line = get_line();
             picked_column = get_column();
 
-            code = pick_piece(game, current, picked_line, picked_column);
+            if (has_possible_move(game, picked_line, picked_column))
+            {
+                code = pick_piece(game, current, picked_line, picked_column);
 
-            if (code == EMPTY)
-            {
-                print_error("La case ciblée est vide!");
-            }
-            else if (code == FORBIDDEN)
-            {
-                print_error("Vous ne pouvez pas déplacer cette pièce!");
-            }
-            // Theoritically, this will never be true
-            else if (code == PARAM)
-            {
-                print_error("Mauvais paramètre!");
+                if (code == EMPTY)
+                {
+                    print_error("La case ciblée est vide !");
+                }
+                else if (code == FORBIDDEN)
+                {
+                    print_error("Vous ne pouvez pas déplacer cette pièce !");
+                }
+                // Theoritically, this will never be true
+                else if (code == PARAM)
+                {
+                    print_error("Mauvais paramètre!");
+                }
+                else
+                {
+                    picked_size = picked_piece_size(game);
+                    success = true;
+                }
             }
             else
             {
-                picked_size = picked_piece_size(game);
-                success = true;
+                print_error("La pièce est bloquée, donc ne pourra pas se déplacer !");
+                
             }
         } while (!success);
 
@@ -236,31 +288,36 @@ int main(void)
                                 swapped = true;
                             }
                         } while (!swapped);
-                    } else {
+                    }
+                    else
+                    {
                         remaining_moves += hovered_size;
                     }
                 }
             }
         }
 
-        if(get_winner(game) != NO_PLAYER) {
+        if (get_winner(game) != NO_PLAYER)
+        {
             running = false;
         }
 
         change_player(&current);
     }
 
-
     player winner = get_winner(game);
 
     printf("Bravo ");
 
-    if(winner == SOUTH_P) {
+    if (winner == SOUTH_P)
+    {
         printf("\e[1;33mSUD");
-    } else {
-		printf("\e[1;34mNORD");
     }
-    
+    else
+    {
+        printf("\e[1;34mNORD");
+    }
+
     printf(" ! Tu as remporté cette partie !!!🎉");
 
     return 0;
