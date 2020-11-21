@@ -1,11 +1,20 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include <limits.h>
-#include <string.h>
 #include <ctype.h>
+#include <limits.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "board.h"
+
+enum action_e
+{
+	SWAP,
+	MOVE
+};
+
+typedef enum action_e action;
 
 int read_number(const char *prompt, int min, int max)
 {
@@ -43,10 +52,72 @@ int read_number(const char *prompt, int min, int max)
 	return in;
 }
 
+char read_char(const char *prompt, int num, ...)
+{
+	va_list valist;
+	char bin;
+	int validInput;
+	char input;
+
+	num = num > 0 ? num : 0;
+
+	char args[num];
+
+	if (num > 0)
+	{
+		va_start(valist, num);
+
+		for (int i = 0; i < num; i++)
+		{
+			args[i] = toupper(va_arg(valist, int));
+		}
+
+		va_end(valist);
+	}
+
+	do
+	{
+		printf("%s", prompt);
+
+		validInput = scanf("%s", &input);
+		if (validInput)
+		{
+			if (num > 0)
+			{
+
+				for (int i = 0; i < num; i++)
+				{
+					input = toupper(input);
+					// Ceci est un fix de bug à la Estebanc
+					if ((int)input == (int)args[i])
+					{
+						return input;
+					}
+				}
+			}
+			else
+			{
+				return input;
+			}
+
+			validInput = 0;
+		}
+		else
+		{
+			scanf("%s", &bin);
+		}
+
+	} while (!validInput);
+
+	return input;
+}
+
 int read_digit_with_quit(const char *prompt)
 {
 	int in;
 	int validInput;
+
+	read_char(prompt, 11, '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Q');
 
 	do
 	{
@@ -78,51 +149,30 @@ int read_digit_with_quit(const char *prompt)
 
 direction read_direction(const char *prompt)
 {
-	char bin;
-
-	int validInput;
-	char input;
+	char input = read_char(prompt, 5, 'N', 'S', 'E', 'O', 'B');
+	char in[] = {input, '\0'};
 	direction dir;
 
-	do
+	if (strcmp(in, "N") == 0)
 	{
-		printf("%s", prompt);
-		validInput = scanf("%s", &input);
-
-		if (validInput)
-		{
-			input = toupper(input);
-
-			if (strcmp(&input, "N"))
-			{
-				dir = NORTH;
-			}
-			else if (strcmp(&input, "S"))
-			{
-				dir = SOUTH;
-			}
-			else if (strcmp(&input, "E"))
-			{
-				dir = EAST;
-			}
-			else if (strcmp(&input, "O"))
-			{
-				dir = WEST;
-			}
-			else if (strcmp(&input, "B"))
-			{
-				dir = GOAL;
-			}
-			else
-			{
-				validInput = 0;
-			}
-		}
-		else
-		{
-			scanf("%s", &bin);
-		}
-	} while (!validInput);
+		dir = NORTH;
+	}
+	else if (strcmp(in, "S") == 0)
+	{
+		dir = SOUTH;
+	}
+	else if (strcmp(in, "E") == 0)
+	{
+		dir = EAST;
+	}
+	else if (strcmp(in, "O") == 0)
+	{
+		dir = WEST;
+	}
+	else if (strcmp(in, "B") == 0)
+	{
+		dir = GOAL;
+	}
 
 	return dir;
 }
@@ -135,27 +185,29 @@ void print_error(const char *error)
 bool confirm_quit()
 {
 	bool mustQuit = false;
-	int res;
-	char confirmation[3];
+	// char confirmation[3];
 
-	printf("Etes-vous sûr de vouloir quitter ? [O]ui / [N]on\n");
+	char confirmation = read_char("Etes-vous sûr de vouloir quitter ? [O]ui / [N]on\n", 0);
 
-	res = scanf("%s", confirmation);
+	mustQuit = (int) confirmation == 'O';
 
-	if (res == 1)
-	{
-		char letter = tolower(confirmation[0]);
+	return mustQuit;
+	// res = scanf("%s", confirmation);
 
-		if (strcmp("o", &letter) == 0)
-		{
-			mustQuit = true;
-		}
-		return mustQuit;
-	}
-	else
-	{
-		return confirm_quit();
-	}
+	// if (res == 1)
+	// {
+	// 	char letter = tolower(confirmation[0]);
+
+	// 	if (strcmp("o", &letter) == 0)
+	// 	{
+	// 		mustQuit = true;
+	// 	}
+	// 	return mustQuit;
+	// }
+	// else
+	// {
+	// 	return confirm_quit();
+	// }
 }
 
 void announce_winner(player winner)
@@ -194,6 +246,10 @@ char *get_piece(player player, size size)
 	return NULL;
 };
 
+//action ask_action() {
+
+//}
+
 void show_board(board game)
 {
 	int p_line = picked_piece_line(game);
@@ -202,32 +258,40 @@ void show_board(board game)
 
 	printf("     \e[1;34mN\e[0m\n");
 	printf("/ / / \\ \\ \\\n");
-	for (int y = 0; y < 6; y++)
+
+	for (int y = 0; y < DIMENSION; y++)
 	{
-		for (int x = 0; x < 6; x++)
+		for (int x = 0; x < DIMENSION; x++)
 		{
-			size piece = get_piece_size(game, 5 - y, x);
-			
-			if(5 - y == p_line && x == p_column && p_owner != NO_PLAYER) {
-				if(p_owner == NORTH_P) {
+			size piece = get_piece_size(game, DIMENSION - y - 1, x);
+
+			if (5 - y == p_line && x == p_column && p_owner != NO_PLAYER)
+			{
+				if (p_owner == NORTH_P)
+				{
 					printf("\e[1;34m•\e[0m");
-				} else {
+				}
+				else
+				{
 					printf("\e[1;33m•\e[0m");
 				}
-			} else if (piece == NONE)
+			}
+			else if (piece == NONE)
 			{
 				printf("o");
-			} else {
+			}
+			else
+			{
 				printf("\e[0;32m%d\e[0m", piece);
 			}
 
-			if (x != 5)
+			if (x != DIMENSION - 1)
 			{
 				printf("-");
 			}
 		}
 		printf("\n");
-		if (y != 5)
+		if (y != DIMENSION - 1)
 		{
 			printf("| | | | | |\n");
 		}
@@ -271,12 +335,12 @@ void change_player(player *current)
 
 int get_line()
 {
-	return read_number("Sur quelle ligne voulez-vous jouer (entre 1 et 6) ? ", 1, 6) - 1;
+	return read_number("Sur quelle ligne voulez-vous jouer (entre 1 et 6) ? ", 1, DIMENSION) - 1;
 }
 
 int get_column()
 {
-	return read_number("Sur quelle colonne voulez-vous jouer (entre 1 et 6) ? ", 1, 6) - 1;
+	return read_number("Sur quelle colonne voulez-vous jouer (entre 1 et 6) ? ", 1, DIMENSION) - 1;
 }
 
 size get_size()
@@ -289,14 +353,12 @@ direction get_direction()
 	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ");
 }
 
-/*
-À changer
+action get_action() {
+	char in = read_char("Vous venez d'arriver sur une piece.\nQue voulez vous faire, [E]changer ou [C]ontinuer ?", 2, 'E', 'C');
 
-
-
-Nouveau
-- is_valid_move
-- déplacement des pions
-- validateur de victoire
-
-*/
+	if((int) in == 'E') {
+		return SWAP;
+	} else {
+		return MOVE;
+	}
+}
