@@ -172,7 +172,9 @@ int main(void)
             }
         } while (!success);
 
-        while (movement_left(game) != 0)
+        remaining_moves = picked_size;
+
+        while (remaining_moves != 0)
         {
             direction dir;
             bool can_move = false;
@@ -234,6 +236,8 @@ int main(void)
                                 swapped = true;
                             }
                         } while (!swapped);
+                    } else {
+                        remaining_moves += hovered_size;
                     }
                 }
             }
