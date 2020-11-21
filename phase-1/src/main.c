@@ -318,7 +318,7 @@ int main(void)
         printf("\e[1;34mNORD");
     }
 
-    printf(" ! Tu as remporté cette partie !!!🎉");
+    printf("\e[0m ! Tu as remporté cette partie !!!🎉\n");
 
     return 0;
 }
