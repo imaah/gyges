@@ -19,6 +19,11 @@ bool in_grid(int line, int column)
 bool has_possible_move(board game, int line, int column)
 {
     int empty_cells = 0;
+    size s = get_piece_size(game, line, column);
+
+    if(s == 1) {
+        return true;
+    } 
 
     if (in_grid(line, column))
     {
@@ -138,9 +143,9 @@ int main(void)
         size size_p;
         bool success = false;
 
-        printf("\n\n\e[0;31m%d\e[0m/12\n", i);
-        announce_turn(current);
         show_board(game);
+        printf("\e[0;31m%d\e[0m/12\n", i);
+        announce_turn(current);
 
         // Repeats until the player inputs a correct value
         do
@@ -172,7 +177,7 @@ int main(void)
         } while (!success);
 
         // It is the next player turn
-        change_player(&current);
+        current = next_player(current);
     }
 
     printf("Début du jeu\n");
@@ -233,6 +238,8 @@ int main(void)
             do
             {
                 show_board(game);
+                printf("[\e[1;31m%d\e[0m déplacements]\n", remaining_moves);
+
                 dir = get_direction();
 
                 can_move = is_move_possible(game, dir);
@@ -302,7 +309,7 @@ int main(void)
             running = false;
         }
 
-        change_player(&current);
+        current = next_player(current);
     }
 
     player winner = get_winner(game);
@@ -319,6 +326,8 @@ int main(void)
     }
 
     printf("\e[0m ! Tu as remporté cette partie !!!🎉\n");
+
+    destroy_game(game);
 
     return 0;
 }

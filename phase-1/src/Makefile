@@ -25,3 +25,7 @@ test: main.c
 
 clean:
 	rm -f $(OUT) $(TODEL)
+
+move:
+	mv $(TODEL) ../build/
+	cp board.o ../build/

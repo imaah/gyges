@@ -37,14 +37,16 @@ int read_number(const char *prompt, int min, int max)
 		printf("%s", prompt);
 
 		validInput = scanf("%d", &in);
-		if (!validInput)
+		if (validInput)
+		{
+			if (min > in || in > max)
+			{
+				validInput = 0;
+			}
+		}
+		else
 		{
 			scanf("%s", &bin);
-		}
-
-		if (min > in || in > max)
-		{
-			validInput = 0;
 		}
 
 	} while (!validInput);
@@ -189,7 +191,7 @@ bool confirm_quit()
 
 	char confirmation = read_char("Etes-vous sûr de vouloir quitter ? [O]ui / [N]on\n", 0);
 
-	mustQuit = (int) confirmation == 'O';
+	mustQuit = (int)confirmation == 'O';
 
 	return mustQuit;
 	// res = scanf("%s", confirmation);
@@ -256,11 +258,14 @@ void show_board(board game)
 	int p_column = picked_piece_column(game);
 	player p_owner = picked_piece_owner(game);
 
-	printf("     \e[1;34mN\e[0m\n");
-	printf("/ / / \\ \\ \\\n");
+	printf("-------------------------------------\n\n");
+
+	printf("            \e[1;34mNORD\e[0m\n");
+	printf("      /  /  /  \\  \\  \\\n");
 
 	for (int y = 0; y < DIMENSION; y++)
 	{
+		printf("      ");
 		for (int x = 0; x < DIMENSION; x++)
 		{
 			size piece = get_piece_size(game, DIMENSION - y - 1, x);
@@ -287,18 +292,45 @@ void show_board(board game)
 
 			if (x != DIMENSION - 1)
 			{
-				printf("-");
+				printf("﹘");
 			}
 		}
+
+		if (y == 1)
+		{
+			printf("        N");
+		} 
+
+		else if (y == 2)
+		{
+			printf("    O ←   → E");
+		}
+		else if (y == 3)
+		{
+			printf("        S");
+		}
+
 		printf("\n");
 		if (y != DIMENSION - 1)
 		{
-			printf("| | | | | |\n");
+			printf("      |  |  |  |  |  |");
+
+			if (y == 1)
+			{
+				printf("        ↑");
+			}
+			else if (y == 2)
+			{
+				printf("        ↓");
+			}  
+
+			printf("\n");
 		}
 	}
 
-	printf("\\ \\ \\ / / /\n");
-	printf("     \e[1;33mS\e[0m\n");
+	printf("      \\  \\  \\  /  /  /\n");
+	printf("            \e[1;33mSUD\e[0m\n\n");
+	printf("-------------------------------------\n\n");
 }
 
 void announce_turn(player player)
@@ -308,7 +340,7 @@ void announce_turn(player player)
 		player = SOUTH_P;
 	}
 
-	printf("-------------------------------------\n\nJoueur ");
+	printf("\nJoueur ");
 	if (player == SOUTH_P)
 	{
 		printf("\e[1;33mSUD");
@@ -318,7 +350,7 @@ void announce_turn(player player)
 		printf("\e[1;34mNORD");
 	}
 
-	printf("\e[0m, à vous de jouer :\n");
+	printf("\e[0m, à vous de jouer :\n\n");
 }
 
 void change_player(player *current)
@@ -353,12 +385,16 @@ direction get_direction()
 	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ");
 }
 
-action get_action() {
+action get_action()
+{
 	char in = read_char("Vous venez d'arriver sur une piece.\nQue voulez vous faire, [E]changer ou [C]ontinuer ?", 2, 'E', 'C');
 
-	if((int) in == 'E') {
+	if ((int)in == 'E')
+	{
 		return SWAP;
-	} else {
+	}
+	else
+	{
 		return MOVE;
 	}
 }
