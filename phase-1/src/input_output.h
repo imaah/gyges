@@ -6,10 +6,17 @@
 
 enum action_e {
     SWAP, 
-    MOVE
+    CONTINUE
+};
+
+enum cancel_type_e {
+    MOVEMENT,
+    STEP
 };
 
 typedef enum action_e action;
+typedef enum cancel_type_e cancel_type;
+
 
 /**
  * \file input_output.h
@@ -59,6 +66,23 @@ char read_char(const char *prompt, int num, ...);
 int read_digit_with_quit(const char *prompt);
 
 /**
+ * @brief reads the input of the player.
+ * 
+ * @param prompt the string to show
+ * @returns the direction inputed by the player, returns -1 if cancelled.
+ * */
+direction read_direction(const char *prompt);
+
+/**
+ * @brief Is used in order print an error.
+ * 
+ * Prints any given error to the screen.
+ * 
+ * @param error the error to show.
+ */
+void print_error(const char *error);
+
+/**
  * @brief Asks the user if he really wants to quit the game.
  * 
  * Asks the player if he really want to quit.
@@ -69,13 +93,11 @@ int read_digit_with_quit(const char *prompt);
 bool confirm_quit();
 
 /**
- * @brief Is used in order print an error.
+ * @brief Annouces the winner once game has one.
  * 
- * Prints any given error to the screen.
- * 
- * @param error the error to show.
+ * @param player the winning player.
  */
-void print_error(const char *error);
+void announce_winner(board game);
 
 /**
  * @brief Displays the board inside the console.*
@@ -94,36 +116,11 @@ void show_board(board game);
 void announce_turn(player player);
 
 /**
- * @brief reads the input of the player.
+ * @brief Cycles through player list.
  * 
- * @param prompt the string to show
- * @returns the direction inputed by the player.
- * */
-direction read_direction(const char *prompt);
-
-/**
- * @brief same as read_direction but it uses a default prompt.
- * 
- * @returns the direction inputed by the player.
- * */
-direction get_direction();
-
-//////////////////////// Faire la doc de AskAction
-action get_action();
-
-/**
- * @brief Annouces the winner once game has one.
- * 
- * @param player the winning player.
- */
-void announce_winner(player winner);
-
-/**
- * @brief Asks the column where the player wants to play.
- * 
- * @returns the inputed value.
- */
-int get_column();
+ * @param player the current player, which will change 
+*/
+void change_player(player * current);
 
 /**
  * @brief Asks the line where the player wants to play.
@@ -133,11 +130,11 @@ int get_column();
 int get_line();
 
 /**
- * @brief Cycles through player list.
+ * @brief Asks the column where the player wants to play.
  * 
- * @param player the current player, which will change 
-*/
-void change_player(player * current);
+ * @returns the inputed value.
+ */
+int get_column();
 
 /**
  * @brief Asks the size of piece the player wants to play.
@@ -145,6 +142,31 @@ void change_player(player * current);
  * @returns the inputed size.
  */
 size get_size();
+
+/**
+ * @brief Same as read_direction but it uses a default prompt.
+ * 
+ * @returns the direction inputed by the player, returns -1 if cancelled.
+ * */
+direction get_direction();
+
+/**
+ * @brief Asks the player if he wants to swap pieces up and down
+ * 
+ * @returns the chosen decision. It can be SWAP to swap pieces or CONTINUE to continue moving
+ */
+action get_action();
+
+/**
+ * 
+ */
+cancel_type get_cancel_type();
+
+
+
+
+
+
 
 #endif /* _INPUT_OUTPUT_H_ */ 
 #endif /* _BOARD_H_ */

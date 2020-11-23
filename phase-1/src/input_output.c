@@ -11,10 +11,17 @@
 enum action_e
 {
 	SWAP,
-	MOVE
+	CONTINUE
+};
+
+enum cancel_type_e
+{
+	MOVEMENT,
+	STEP
 };
 
 typedef enum action_e action;
+typedef enum cancel_type_e cancel_type;
 
 int read_number(const char *prompt, int min, int max)
 {
@@ -59,11 +66,11 @@ char read_char(const char *prompt, int num, ...)
 	va_list valist;
 	char bin;
 	int validInput;
-	char input;
-
+	char input[CHAR_MAX];
 	num = num > 0 ? num : 0;
-
 	char args[num];
+
+	char value;
 
 	if (num > 0)
 	{
@@ -81,25 +88,32 @@ char read_char(const char *prompt, int num, ...)
 	{
 		printf("%s", prompt);
 
-		validInput = scanf("%s", &input);
+		validInput = scanf("%s", input);
+
 		if (validInput)
 		{
-			if (num > 0)
+			if (strlen(input) != 1)
 			{
-
-				for (int i = 0; i < num; i++)
-				{
-					input = toupper(input);
-					// Ceci est un fix de bug à la Estebanc
-					if ((int)input == (int)args[i])
-					{
-						return input;
-					}
-				}
+				validInput = 0;
 			}
 			else
 			{
-				return input;
+				value = toupper(input[0]);
+				if (num > 0)
+				{
+					for (int i = 0; i < num; i++)
+					{
+						// Ceci est un fix de bug à la Estebanc
+						if ((int)value == (int)args[i])
+						{
+							return value;
+						}
+					}
+				}
+				else
+				{
+					return value;
+				}
 			}
 
 			validInput = 0;
@@ -111,7 +125,7 @@ char read_char(const char *prompt, int num, ...)
 
 	} while (!validInput);
 
-	return input;
+	return value;
 }
 
 int read_digit_with_quit(const char *prompt)
@@ -151,7 +165,7 @@ int read_digit_with_quit(const char *prompt)
 
 direction read_direction(const char *prompt)
 {
-	char input = read_char(prompt, 5, 'N', 'S', 'E', 'O', 'B');
+	char input = read_char(prompt, 6, 'N', 'S', 'E', 'O', 'B', 'A');
 	char in[] = {input, '\0'};
 	direction dir;
 
@@ -175,6 +189,10 @@ direction read_direction(const char *prompt)
 	{
 		dir = GOAL;
 	}
+	else if (strcmp(in, "A") == 0)
+	{
+		dir = -1;
+	}
 
 	return dir;
 }
@@ -187,70 +205,31 @@ void print_error(const char *error)
 bool confirm_quit()
 {
 	bool mustQuit = false;
-	// char confirmation[3];
 
 	char confirmation = read_char("Etes-vous sûr de vouloir quitter ? [O]ui / [N]on\n", 0);
 
 	mustQuit = (int)confirmation == 'O';
 
 	return mustQuit;
-	// res = scanf("%s", confirmation);
-
-	// if (res == 1)
-	// {
-	// 	char letter = tolower(confirmation[0]);
-
-	// 	if (strcmp("o", &letter) == 0)
-	// 	{
-	// 		mustQuit = true;
-	// 	}
-	// 	return mustQuit;
-	// }
-	// else
-	// {
-	// 	return confirm_quit();
-	// }
 }
 
-void announce_winner(player winner)
+void announce_winner(board game)
 {
-	if (winner == SOUTH_P)
-	{
-		printf("\e[1;33mBRAVO Joueur SUD, vous avez GAGNÉ!\e[0m\n\n");
-	}
-	else
-	{
-		printf("\e[1;34mBRAVO Joueur NORD, vous avez GAGNÉ!\e[0m\n\n");
-	}
+	player winner = get_winner(game);
+
+    printf("Bravo ");
+
+    if (winner == SOUTH_P)
+    {
+        printf("\e[1;33mSUD");
+    }
+    else
+    {
+        printf("\e[1;34mNORD");
+    }
+
+    printf("\e[0m ! Tu as remporté cette partie !!!🎉\n");
 }
-
-// void print_giveup(player player)
-// {
-// 	if (player == NO_PLAYER)
-// 	{
-// 		player = SOUTH_P;
-// 	}
-
-// 	if (player == NORTH_P)
-// 	{
-// 		printf("\e[0mLe \e[1;33m");
-// 	}
-// 	else
-// 	{
-// 		printf("\e[0mLe \e[1;34m");
-// 	}
-// 	printf("Joueur %d\e[0m a abandonné.\n", player);
-// 	announce_winner(next_player(player));
-// }
-
-char *get_piece(player player, size size)
-{
-	return NULL;
-};
-
-//action ask_action() {
-
-//}
 
 void show_board(board game)
 {
@@ -299,7 +278,7 @@ void show_board(board game)
 		if (y == 1)
 		{
 			printf("        N");
-		} 
+		}
 
 		else if (y == 2)
 		{
@@ -322,7 +301,7 @@ void show_board(board game)
 			else if (y == 2)
 			{
 				printf("        ↓");
-			}  
+			}
 
 			printf("\n");
 		}
@@ -382,7 +361,23 @@ size get_size()
 
 direction get_direction()
 {
-	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ");
+	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ou annuler (A)");
+}
+
+cancel_type get_cancel_type() {
+	char c = read_char("Voulez-vous annuler le dernier [P]as ou retourner à la position [I]nitiale ?", 2, 'P', 'I');
+	char input[] = {c, '\0'};
+
+	cancel_type type;
+
+	if(strcmp(input, "P") == 0) {
+		type = STEP;
+	} else 
+	if(strcmp(input, "I") == 0) {
+		type = MOVEMENT;
+	}
+
+	return type;
 }
 
 action get_action()
@@ -395,6 +390,6 @@ action get_action()
 	}
 	else
 	{
-		return MOVE;
+		return CONTINUE;
 	}
 }
