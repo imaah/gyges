@@ -4,6 +4,12 @@
 #include "board.h"
 #include "input_output.h"
 
+/*
+ * Places pieces on the board.
+ * 
+ * This function is called at the beggining of the game to place the 6 starting pieces of each player on each side
+ * of the board. 
+ */
 void initialize_game(board game, player *p)
 {
     player current = *p;
@@ -36,7 +42,7 @@ void initialize_game(board game, player *p)
             {
                 print_error("Vous avez déjà placez toutes vos pièces de cette taille!");
             }
-            // Theoritically, this will never be true
+            // Theoritically, this will never be true because params errors are already handled in input_output.c
             else if (code == PARAM)
             {
                 print_error("Mauvais paramètre !");
@@ -54,13 +60,19 @@ void initialize_game(board game, player *p)
     *p = current;
 }
 
+/*
+ * Picks a piece to move.
+ * 
+ * This function takes position of a piece on the board and moves it around on the board according to player's choice.
+ */
 int get_piece(board game, player current)
 {
     bool success = false;
     int picked_line;
     int picked_column;
     size picked_size;
-
+    
+    // Getting the position of the piece, and looping through error code until there is none
     do
     {
         return_code code;
@@ -82,6 +94,7 @@ int get_piece(board game, player current)
         {
             print_error("Mauvais paramètre!");
         }
+        // If no error, it's a success
         else
         {
             picked_size = picked_piece_size(game);
@@ -90,17 +103,26 @@ int get_piece(board game, player current)
 
     } while (!success);
 
+    // Returns the correctly picked piece size
     return picked_size;
 }
 
+/* 
+ * Asks if the player wants to swap the piece or continue moving.
+ * 
+ * If the player's last move of a piece happens to be on the same cell of another cell, he can etheir swap his
+ * piece with the other one, or continue moving his current one. This function asks him which action he wants to do.
+ */
 void ask_action(board game, int *rmoves, size hovered_size)
 {
     action ac = get_action();
 
+    // If the player wants to swap, ask him with which piece
     if (ac == SWAP)
     {
         bool swapped = false;
 
+        // Regular error handling, to avoid trying to swap with non-existing pieces
         do
         {
             int swap_line = get_line();
@@ -128,18 +150,27 @@ void ask_action(board game, int *rmoves, size hovered_size)
             }
         } while (!swapped);
     }
+    // If he does not want to swap, he must want to move again
     else
     {
         *rmoves += hovered_size;
     }
 }
 
+/**
+ * Moves pieces around the board.
+ * 
+ * This function is used once all parameters are correct, and the picked piece can be moved.
+ */
 bool play(board game, int *rmoves)
 {
+    // Looping until there is no move left
     while (*rmoves != 0)
     {
         direction dir;
         bool can_move = false;
+        
+        // Showing how many moves are left
         do
         {
             show_board(game);
@@ -153,7 +184,10 @@ bool play(board game, int *rmoves)
                 printf("[\e[1;31m%d\e[0m déplacement restant]\n", *rmoves);
             }
 
+            // Asking the player in which direction he wants to play
             dir = get_direction();
+            
+            // Handling if the chosen direction is not existing
             if (dir == -1)
             {
                 cancel_type type = get_cancel_type();
@@ -169,6 +203,7 @@ bool play(board game, int *rmoves)
                     return true;
                 }
             }
+            // If the chosen direction is possible, check if it's doable
             else
             {
                 can_move = is_move_possible(game, dir);
@@ -180,11 +215,13 @@ bool play(board game, int *rmoves)
             }
         } while (!can_move);
 
+        // If everyting is good, move the piece
         move_piece(game, dir);
 
         int picked_line = picked_piece_line(game);
         int picked_column = picked_piece_column(game);
 
+        // After moving, substracting one move to the total
         (*rmoves)--;
 
         if (*rmoves == 0 && picked_line != -1 && picked_column != -1)
@@ -201,6 +238,13 @@ bool play(board game, int *rmoves)
     return false;
 }
 
+/**
+ * This function starts a new game turn.
+ * 
+ * Each time a move ends because a player has no option left, this function is called to show the board, tell
+ * the next player that it's his name to play and switch the player enum to the next element.
+ * If the game has a winner, the function returns false to tell the main function that we have a winner.
+ */
 bool game_turn(board game, player *current)
 {   
     show_board(game);
@@ -209,6 +253,7 @@ bool game_turn(board game, player *current)
     int remaining_moves = get_piece(game, *current);
     bool cancelled = play(game, &remaining_moves);
 
+    // If everything went fine, check if we have a winner
     if (cancelled == false)
     {
         if (get_winner(game) != NO_PLAYER)
@@ -222,21 +267,31 @@ bool game_turn(board game, player *current)
     return true;
 }
 
+/**
+ * Main loop of the game.
+ * 
+ * This function acts as the main loop of the game. It calls one after another each important function to the
+ * effective conduct of the game.
+ */
 int main(void)
 {
+    // Running the game until we have a winner
     bool running = true;
     board game = new_game();
     player current = SOUTH_P;
 
+    // Initializing the game by placing 6 pieces for each player
     initialize_game(game, &current);
 
     printf("Début du jeu\n");
 
+    // While we have no winner, we go on a new game turn
     while (running)
     {
         running = game_turn(game, &current);
     }
 
+    // If we have a winner, we announce it and we stop the game
     announce_winner(game);
 
     destroy_game(game);
