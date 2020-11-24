@@ -30,6 +30,19 @@ typedef enum cancel_type_e cancel_type;
  */
 
 /**
+ * \mainpage Project 2020-2021 for IUT Grand Ouest Normandie, 
+ * computer science department.
+ *
+ * The project is divided into various files. Mostly, the engine of the game,
+ * implementing the detailed rules, is provided in the files board.c and board.h
+ *
+ * \section rules Detailed rules of the game.
+ * 
+ * The game is played by two players on a six by six squares board, 
+ * with two goals. Detailed rules are included in the pdf subject, not recalled here (yet).
+ */
+
+/**
  * @brief Allows you ask a number to the user.
  * 
  * @param prompt the string to show
@@ -81,16 +94,6 @@ direction read_direction(const char *prompt);
  * @param error the error to show.
  */
 void print_error(const char *error);
-
-/**
- * @brief Asks the user if he really wants to quit the game.
- * 
- * Asks the player if he really want to quit.
- * This avoids quitting because of a typo.
- * 
- * @returns whether the player wants to quit or not.
- */
-bool confirm_quit();
 
 /**
  * @brief Annouces the winner once game has one.
@@ -158,15 +161,11 @@ direction get_direction();
 action get_action();
 
 /**
+ * @brief Asks the type of cancel the player wants to do
  * 
+ * @return the chosen decision. It can be MOVEMENT or STEP
  */
 cancel_type get_cancel_type();
-
-
-
-
-
-
 
 #endif /* _INPUT_OUTPUT_H_ */ 
 #endif /* _BOARD_H_ */

@@ -67,7 +67,11 @@ char read_char(const char *prompt, int num, ...)
 	char bin;
 	int validInput;
 	char input[CHAR_MAX];
-	num = num > 0 ? num : 0;
+
+	if(num < 0) {
+		num = 0;
+	}
+
 	char args[num];
 
 	char value;
@@ -135,31 +139,6 @@ int read_digit_with_quit(const char *prompt)
 
 	read_char(prompt, 11, '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Q');
 
-	do
-	{
-		char val;
-		printf("%s", prompt);
-
-		validInput = scanf("%s", &val);
-
-		if (validInput)
-		{
-			if (strcmp(&val, "q") == 0 || strcmp(&val, "Q") == 0)
-			{
-				in = -1;
-				validInput = 1;
-			}
-			else if (isdigit(val))
-			{
-				in = atoi(&val);
-			}
-			else
-			{
-				validInput = 0;
-			}
-		}
-	} while (!validInput);
-
 	return in;
 }
 
@@ -200,17 +179,6 @@ direction read_direction(const char *prompt)
 void print_error(const char *error)
 {
 	printf("\n\033[1;31mERREUR :\033[0m\n\033[0;31m%s\033[0m\n", error);
-}
-
-bool confirm_quit()
-{
-	bool mustQuit = false;
-
-	char confirmation = read_char("Etes-vous sûr de vouloir quitter ? [O]ui / [N]on\n", 0);
-
-	mustQuit = (int)confirmation == 'O';
-
-	return mustQuit;
 }
 
 void announce_winner(board game)
