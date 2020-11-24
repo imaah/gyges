@@ -2,8 +2,7 @@ OBJS   = main.o input_output.o game.o board.o
 TODEL  = main.o input_output.o game.o
 SOURCE = main.c input_output.c game.c
 HEADER = input_output.h board.h game.h
-OUT    = gyges
-DOUT   = test-gyges
+OUT    = gyges.out
 CC     = gcc
 FLAGS  = -c -Wall
 
@@ -20,5 +19,5 @@ clean:
 	rm -f $(OUT) $(TODEL)
 
 move:
-	mv $(TODEL) ../build/
+	mv $(TODEL) $(OUT) ../build/
 	cp board.o ../build/

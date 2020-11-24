@@ -7,21 +7,7 @@
 #include <stdlib.h>
 
 #include "board.h"
-
-enum action_e
-{
-	SWAP,
-	CONTINUE
-};
-
-enum cancel_type_e
-{
-	MOVEMENT,
-	STEP
-};
-
-typedef enum action_e action;
-typedef enum cancel_type_e cancel_type;
+#include "input_output.h"
 
 int read_number(const char *prompt, int min, int max)
 {
@@ -35,52 +21,59 @@ int read_number(const char *prompt, int min, int max)
 		max = INT_MAX;
 	}
 
-	int in;
+	char input[MAX_INPUT];
 	int validInput;
 	char bin;
+	int value = -1;
 
-	do
-	{
+	// Looping until we get a valid input
+	do {
 		printf("%s", prompt);
 
-		validInput = scanf("%d", &in);
+		validInput = scanf("%s", input);
+
 		if (validInput)
 		{
-			if (min > in || in > max)
+			value = atoi(input);
+
+			if (min > value || value > max)
 			{
 				validInput = 0;
 			}
 		}
+		// Filling the overflow into a bin
 		else
 		{
 			scanf("%s", &bin);
 		}
-
 	} while (!validInput);
 
-	return in;
+	return value;
 }
 
-char read_char(const char *prompt, int num, ...)
+char read_char(const char *prompt, int args_count, ...)
 {
 	va_list valist;
 	char bin;
 	int validInput;
-	char input[CHAR_MAX];
+	char input[MAX_INPUT];
 
-	if(num < 0) {
-		num = 0;
+	// Avoiding negative args
+	if (args_count < 0)
+	{
+		args_count = 0;
 	}
 
-	char args[num];
+	char args[args_count];
 
 	char value;
 
-	if (num > 0)
+	// Making sure that all args are uppercase
+	if (args_count > 0)
 	{
-		va_start(valist, num);
+		va_start(valist, args_count);
 
-		for (int i = 0; i < num; i++)
+		for (int i = 0; i < args_count; i++)
 		{
 			args[i] = toupper(va_arg(valist, int));
 		}
@@ -88,89 +81,75 @@ char read_char(const char *prompt, int num, ...)
 		va_end(valist);
 	}
 
-	do
-	{
+	// Looping through possible values that could be returned (these are known from the function args)
+	do {
 		printf("%s", prompt);
 
 		validInput = scanf("%s", input);
 
+		// If the input is correct
 		if (validInput)
 		{
-			if (strlen(input) != 1)
+			// Getting only the first char, in case the player wrote something like "Nord" instead of "N"
+			value = toupper(input[0]);
+			// If there are multiple letters that could be returned, check which one has been entered
+			if (args_count > 0)
 			{
-				validInput = 0;
-			}
-			else
-			{
-				value = toupper(input[0]);
-				if (num > 0)
+			 	// Looping through all possible values to be returned, to see if the input is one of them
+				for (int i = 0; i < args_count; i++)
 				{
-					for (int i = 0; i < num; i++)
+				 		// If the inputed char is a possible action, return it
+					if ((int) value == (int) args[i])
 					{
-						// Ceci est un fix de bug à la Estebanc
-						if ((int)value == (int)args[i])
-						{
-							return value;
-						}
+						return value;
 					}
 				}
-				else
-				{
-					return value;
-				}
+			}
+			// If there is only one letter to return, return it
+			else
+			{
+				return value;
 			}
 
 			validInput = 0;
 		}
+		// Filling the bin with the potential overflow
 		else
 		{
 			scanf("%s", &bin);
 		}
-
 	} while (!validInput);
 
 	return value;
 }
 
-int read_digit_with_quit(const char *prompt)
-{
-	int in;
-	int validInput;
-
-	read_char(prompt, 11, '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Q');
-
-	return in;
-}
-
 direction read_direction(const char *prompt)
 {
+	// Asking a letter as input between "N", "S", "E", "O", "B" or "A"
 	char input = read_char(prompt, 6, 'N', 'S', 'E', 'O', 'B', 'A');
-	char in[] = {input, '\0'};
-	direction dir;
+	direction dir = -1;
 
-	if (strcmp(in, "N") == 0)
+	// Switching between all return cases possible to know which direction has been chosen
+	switch (input)
 	{
-		dir = NORTH;
-	}
-	else if (strcmp(in, "S") == 0)
-	{
-		dir = SOUTH;
-	}
-	else if (strcmp(in, "E") == 0)
-	{
-		dir = EAST;
-	}
-	else if (strcmp(in, "O") == 0)
-	{
-		dir = WEST;
-	}
-	else if (strcmp(in, "B") == 0)
-	{
-		dir = GOAL;
-	}
-	else if (strcmp(in, "A") == 0)
-	{
-		dir = -1;
+		case 'N':
+			dir = NORTH;
+			break;
+		case 'S':
+			dir = SOUTH;
+			break;
+		case 'E':
+			dir = EAST;
+			break;
+		case 'O':
+			dir = WEST;
+			break;
+		case 'B':
+			dir = GOAL;
+			break;
+		case 'A':
+			dir = -1;
+			break;
 	}
 
 	return dir;
@@ -183,43 +162,50 @@ void print_error(const char *error)
 
 void announce_winner(board game)
 {
+	// Getting the winner of the game
 	player winner = get_winner(game);
 
-    printf("Bravo ");
+	printf("Bravo ");
 
-    if (winner == SOUTH_P)
-    {
-        printf("\e[1;33mSUD");
-    }
-    else
-    {
-        printf("\e[1;34mNORD");
-    }
+	// Checking which player won, to announce the winner in a colored message according to the winner's color
+	if (winner == SOUTH_P)
+	{
+		printf("\e[1;33mSUD");
+	}
+	else
+	{
+		printf("\e[1;34mNORD");
+	}
 
-    printf("\e[0m ! Tu as remporté cette partie !!!🎉\n");
+	printf("\e[0m !\nTu as remporté cette partie !!!🎉\n");
 }
 
 void show_board(board game)
 {
-	int p_line = picked_piece_line(game);
-	int p_column = picked_piece_column(game);
-	player p_owner = picked_piece_owner(game);
+	// Getting the current picked piece to print it in color and differently
+	int picked_line = picked_piece_line(game);
+	int picked_column = picked_piece_column(game);
+	player picked_owner = picked_piece_owner(game);
 
-	printf("-------------------------------------\n\n");
-
+	// Printing the "Header" of the board
+	printf("\n\n-------------------------------------\n\n");
 	printf("            \e[1;34mNORD\e[0m\n");
 	printf("      /  /  /  \\  \\  \\\n");
 
-	for (int y = 0; y < DIMENSION; y++)
+	// Looping through lines
+	for (int line = 0; line < DIMENSION; line++)
 	{
 		printf("      ");
-		for (int x = 0; x < DIMENSION; x++)
+		// Looping through columns
+		for (int column = 0; column < DIMENSION; column++)
 		{
-			size piece = get_piece_size(game, DIMENSION - y - 1, x);
+			// Getting which piece to place in these coordinates
+			size piece = get_piece_size(game, DIMENSION - line - 1, column);
 
-			if (5 - y == p_line && x == p_column && p_owner != NO_PLAYER)
+			if (5 - line == picked_line && column == picked_column && picked_owner != NO_PLAYER)
 			{
-				if (p_owner == NORTH_P)
+			 	// Checking which player is currently holding the piece, to print it according to his color
+				if (picked_owner == NORTH_P)
 				{
 					printf("\e[1;34m•\e[0m");
 				}
@@ -228,53 +214,58 @@ void show_board(board game)
 					printf("\e[1;33m•\e[0m");
 				}
 			}
+			// Printing the regular "o" if no piece is selected
 			else if (piece == NONE)
 			{
 				printf("o");
 			}
+			// Else priting the piece itself
 			else
 			{
 				printf("\e[0;32m%d\e[0m", piece);
 			}
 
-			if (x != DIMENSION - 1)
+			if (column != DIMENSION - 1)
 			{
 				printf("﹘");
 			}
 		}
 
-		if (y == 1)
+		// First check to see if we are printing the middle of the board. If so, we print a compass
+		if (line == 2)
 		{
-			printf("        N");
+			printf("        ↑");
 		}
-
-		else if (y == 2)
+		else if (line == 3)
 		{
-			printf("    O ←   → E");
-		}
-		else if (y == 3)
-		{
-			printf("        S");
+			printf("        ↓");
 		}
 
 		printf("\n");
-		if (y != DIMENSION - 1)
+		// Printing the separator between lines only if we are not on the last line
+		if (line != DIMENSION - 1)
 		{
 			printf("      |  |  |  |  |  |");
 
-			if (y == 1)
+			// Second check to print the compass at the middle height of the board
+			if (line == 1)
 			{
-				printf("        ↑");
+				printf("        N");
 			}
-			else if (y == 2)
+			else if (line == 2)
 			{
-				printf("        ↓");
+				printf("    O ←   → E");
+			}
+			else if (line == 3)
+			{
+				printf("        S");
 			}
 
 			printf("\n");
 		}
 	}
 
+	// Priting the "Footer" of the board
 	printf("      \\  \\  \\  /  /  /\n");
 	printf("            \e[1;33mSUD\e[0m\n\n");
 	printf("-------------------------------------\n\n");
@@ -282,11 +273,13 @@ void show_board(board game)
 
 void announce_turn(player player)
 {
+	// Making sure that there is always a selected player
 	if (player == NO_PLAYER)
 	{
 		player = SOUTH_P;
 	}
 
+	// Checking which players' turn it is to print the announcement according to their colors
 	printf("\nJoueur ");
 	if (player == SOUTH_P)
 	{
@@ -298,18 +291,6 @@ void announce_turn(player player)
 	}
 
 	printf("\e[0m, à vous de jouer :\n\n");
-}
-
-void change_player(player *current)
-{
-	if (*current == NORTH_P)
-	{
-		*current = SOUTH_P;
-	}
-	else
-	{
-		*current = NORTH_P;
-	}
 }
 
 int get_line()
@@ -324,25 +305,31 @@ int get_column()
 
 size get_size()
 {
-	return read_number("Quelle taille de pièce voulez-vous jouer?\n(1/2/3) ", 1, 3);
+	return read_number("Quelle taille de pièce voulez-vous jouer?\n(1/2/3) ", 1, NB_SIZE);
 }
 
 direction get_direction()
 {
-	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ou annuler (A)");
+	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ou annuler (A)\n");
 }
 
-cancel_type get_cancel_type() {
-	char c = read_char("Voulez-vous annuler le dernier [P]as ou retourner à la position [I]nitiale ?", 2, 'P', 'I');
-	char input[] = {c, '\0'};
+cancel_type get_cancel_type()
+{
+	// Asking if the player wants to comeback to inital position, of rollback only 1 step behind
+	char input = read_char("Voulez-vous annuler le dernier [P]as ou retourner à la position [I]nitiale ? ", 2, 'P', 'I');
 
-	cancel_type type;
+	// Setting default type to STEP, because there are two existing (STEP and MOVEMENT)
+	cancel_type type = STEP;
 
-	if(strcmp(input, "P") == 0) {
-		type = STEP;
-	} else 
-	if(strcmp(input, "I") == 0) {
-		type = MOVEMENT;
+	// Checking which cancelling type has been chosen
+	switch (input)
+	{
+		case 'P':
+			type = STEP;
+			break;
+		case 'I':
+			type = MOVEMENT;
+			break;
 	}
 
 	return type;
@@ -350,14 +337,45 @@ cancel_type get_cancel_type() {
 
 action get_action()
 {
-	char in = read_char("Vous venez d'arriver sur une piece.\nQue voulez vous faire, [E]changer ou [C]ontinuer ?", 2, 'E', 'C');
+	// Asking the player if he wants to continue moving or if he wants to swap pieces when his last step is on another piece
+	char input = read_char("Vous venez d'arriver sur une piece.\nQue voulez vous faire, [E]changer ou [C]ontinuer ? ", 2, 'E', 'C');
 
-	if ((int)in == 'E')
+	// Setting default type to CONTINUE, because there are two existing (SWAP and CONTINUE)
+	action action_i = CONTINUE;
+
+	// Checking which action has been chosen
+	switch (input)
 	{
-		return SWAP;
+		case 'E':
+			action_i = SWAP;
+			break;
+		case 'C':
+			action_i = CONTINUE;
 	}
-	else
+
+	return action_i;
+}
+
+bool confirm(char *prompt)
+{
+	// Asking if the player really wants to quit
+	char input = read_char(prompt, 2, 'O', 'N');
+
+	// If the returned char in "O", we quit
+	if ((int) input == 'O')
 	{
-		return CONTINUE;
+		return true;
 	}
+
+	return false;
+}
+
+bool confirm_swap()
+{
+	return confirm("Voulez-vous vraiment échanger la pièce ?[O]UI/[N]ON");
+}
+
+bool confirm_continue()
+{
+	return confirm("Voulez-vous vraiment continuer à déplacer la pièce ? [O]ui/[N]on ");
 }
