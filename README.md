@@ -12,3 +12,7 @@ A partir d'un [``board.o``](https://github.com/myimah/gyges/tree/main/phase-1/sr
 Voir [``Makefile``](https://github.com/myimah/gyges/tree/main/phase-1/src/Makefile) pour les scripts de build.
 
 Pour construire le projet, exécutez ``make`` dans le terminal du dossier du projet.
+
+### Latest Build :
+For linux : [`gyges.out`](https://github.com/myimah/gyges/tree/main/phase-1/build/gyges.out)
+For window : not available yet
