@@ -1,9 +1,9 @@
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "board.h"
-#include "input_output.h"
 #include "game.h"
+#include "input_output.h"
 
 /**
  * @file main.c

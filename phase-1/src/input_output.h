@@ -59,24 +59,12 @@ int read_number(const char *prompt, int min, int max);
  * It could be a direction, the winning move, if he wants to quit or which type of action he wants to do (i.e. swap/move)
  * 
  * @param prompt the string to show
- * @param num the number of different accepted characters. if num <= 0 every character will be accepted.
+ * @param args_count the number of different accepted characters. if num <= 0 every character will be accepted.
  * @param ... the different accepted characters
  * 
  * @returns the inputed character
 */
-char read_char(const char *prompt, int num, ...);
-
-/**
- * @brief Is used in order to ask a number to the user or the character "q" to quit.
- * 
- * Asks if the player wants to quit the game.
- * If the answer is "Quit", the game will stop running properly.
- * Else, the game will go on.
- * 
- * @param prompt the string to show
- * @returns the inputed value, or -1 if quit 
- */
-int read_digit_with_quit(const char *prompt);
+char read_char(const char *prompt, int args_count, ...);
 
 /**
  * @brief reads the input of the player.
@@ -119,13 +107,6 @@ void show_board(board game);
 void announce_turn(player player);
 
 /**
- * @brief Cycles through player list.
- * 
- * @param player the current player, which will change 
-*/
-void change_player(player * current);
-
-/**
  * @brief Asks the line where the player wants to play.
  * 
  * @returns the inputed value.
@@ -166,6 +147,30 @@ action get_action();
  * @return the chosen decision. It can be MOVEMENT or STEP
  */
 cancel_type get_cancel_type();
+
+/**
+ * @brief Asks to the player for a confirmation
+ * 
+ * @returns true if the player inputed 'O' or false if he inputed 'N'
+ */
+bool confirm(char *prompt);
+
+/**
+ * @brief Asks the player if he really want to swap the pieces.
+ * 
+ * Used to ask the player if he really wants to swap the pieces, else he can rollback his last move
+ *  * @returns true if he really wants to swap, false otherwise
+ */
+bool confirm_swap();
+
+/**
+ * @brief Asks the player if he really want to move the piece when he has the choice
+ * 
+ * Sometimes, the player can chose between swaping two pieces or continue moving, this function asks
+ * him if he really wants to move. If not, cancel.
+ * @returns true if he really wants to continue, false otherwise
+ */
+bool confirm_continue();
 
 #endif /* _INPUT_OUTPUT_H_ */ 
 #endif /* _BOARD_H_ */

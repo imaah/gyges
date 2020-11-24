@@ -45,7 +45,7 @@ int get_piece(board game, player current);
  * @param rmoves a pointer to the remaining moves
  * @param hovered_size the size of the hovered piece
  */
-void ask_action(board game, int *rmoves, size hovered_size);
+void ask_action(board game, int *remaining_moves, size hovered_size);
 
 /**
  * @brief Moves pieces around the board.

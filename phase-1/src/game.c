@@ -1,5 +1,5 @@
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "board.h"
 #include "input_output.h"
@@ -60,13 +60,43 @@ size choose_piece(board game, player current_player)
     int picked_line;
     int picked_column;
     size picked_size;
-    
+
     // Getting the position of the piece, and looping through error code until there is none
     do
     {
         return_code code;
-        picked_line = get_line();
-        picked_column = get_column();
+        if (current_player == SOUTH_P)
+        {
+            picked_line = southmost_occupied_line(game);
+        }
+        else
+        {
+            picked_line = northmost_occupied_line(game);
+        }
+        printf("Vous jouez sur la ligne \e[1;33m%d\e[0m\n", picked_line + 1);
+
+        // Reseting the total piece in a row to 0
+        int placed_piece = 0;
+        // Looping through all the cells of the row to check if there is more than 1 piece
+        for (int i = 0; i < DIMENSION; i++)
+        {
+            // If there is a piece, increment the counter
+            if (get_piece_size(game, picked_line, i) != NONE)
+            {
+                placed_piece++;
+                picked_column = i;
+            }
+        }
+
+        // If there is only one piece in the row, auto-pick
+        if (placed_piece > 1)
+        {
+            picked_column = get_column();
+        }
+        else
+        {
+            printf("Puisqu'il n'y avait qu'une seule pièce dans la ligne la plus proche de votre camp, elle à été selectionnée\n");
+        }
 
         code = pick_piece(game, current_player, picked_line, picked_column);
 
@@ -96,75 +126,90 @@ size choose_piece(board game, player current_player)
     return picked_size;
 }
 
-void ask_action(board game, int *rmoves, size hovered_size)
+void ask_action(board game, int *remaining_moves, size hovered_size)
 {
-    action ac = get_action();
+    bool confirmed = false;
+
+    do
+    {
+        action ac = get_action();
+
+        if (ac == SWAP)
+        {
+            bool swapped = false;
+
+            if (confirm_swap())
+            {
+                confirmed = true;
+                // Regular error handling, to avoid trying to swap with non-existing pieces
+                do
+                {
+                    int swap_line = get_line();
+                    int swap_column = get_column();
+
+                    return_code code = swap_piece(game, swap_line, swap_column);
+
+                    if (code == EMPTY)
+                    {
+                        print_error("Vous ne pouvez pas échanger les pièces pour le moment !");
+                    }
+                    else if (code == FORBIDDEN)
+                    {
+                        print_error("L'emplacement ciblé n'est pas libre !");
+                    }
+                    // Theoritically, this will never be true
+                    else if (code == PARAM)
+                    {
+                        print_error("Mauvais paramètre !");
+                    }
+                    else
+                    {
+                        // The user input is correct so the loop will stop
+                        swapped = true;
+                    }
+                } while (!swapped);
+            }
+        }
+        // If he does not want to swap, he must want to move again
+        else
+        {
+            if (confirm_continue())
+            {
+                *remaining_moves += hovered_size;
+                confirmed = true;
+            }
+        }
+    } while (!confirmed);
 
     // If the player wants to swap, ask him with which piece
-    if (ac == SWAP)
-    {
-        bool swapped = false;
-
-        // Regular error handling, to avoid trying to swap with non-existing pieces
-        do
-        {
-            int swap_line = get_line();
-            int swap_column = get_column();
-
-            return_code code = swap_piece(game, swap_line, swap_column);
-
-            if (code == EMPTY)
-            {
-                print_error("Vous ne pouvez pas échanger les pièces pour le moment !");
-            }
-            else if (code == FORBIDDEN)
-            {
-                print_error("L'emplacement ciblé n'est pas libre !");
-            }
-            // Theoritically, this will never be true
-            else if (code == PARAM)
-            {
-                print_error("Mauvais paramètre !");
-            }
-            else
-            {
-                // The user input is correct so the loop will stop
-                swapped = true;
-            }
-        } while (!swapped);
-    }
-    // If he does not want to swap, he must want to move again
-    else
-    {
-        *rmoves += hovered_size;
-    }
 }
 
-bool play(board game, int *rmoves)
+bool play(board game, int *remaining_moves_p)
 {
     // Looping until there is no move left
-    while (*rmoves != 0)
+    int move_done = 0;
+    while (*remaining_moves_p != 0)
     {
         direction dir;
         bool can_move = false;
-        
+
         // Showing how many moves are left
         do
         {
             show_board(game);
 
-            if (*rmoves > 1)
+            if (*remaining_moves_p > 1)
             {
-                printf("[\e[1;31m%d\e[0m déplacements restants]\n", *rmoves);
+                printf("[\e[1;31m%d\e[0m déplacements restants]\n", *remaining_moves_p);
             }
             else
             {
-                printf("[\e[1;31m%d\e[0m déplacement restant]\n", *rmoves);
+                printf("[\e[1;31m%d\e[0m déplacement restant]\n", *remaining_moves_p);
             }
 
             // Asking the player in which direction he wants to play
             dir = get_direction();
-            
+
             // Handling if the chosen direction is not existing
             if (dir == -1)
             {
@@ -172,8 +217,17 @@ bool play(board game, int *rmoves)
 
                 if (type == STEP)
                 {
-                    cancel_step(game);
-                    (*rmoves)++;
+                    if (move_done == 0)
+                    {
+                        cancel_movement(game);
+                        return true;
+                    }
+                    else
+                    {
+                        cancel_step(game);
+                        (*remaining_moves_p)++;
+                        move_done--;
+                    }
                 }
                 else
                 {
@@ -200,15 +254,16 @@ bool play(board game, int *rmoves)
         int picked_column = picked_piece_column(game);
 
         // After moving, substracting one move to the total
-        (*rmoves)--;
+        (*remaining_moves_p)--;
+        move_done++;
 
-        if (*rmoves == 0 && picked_line != -1 && picked_column != -1)
+        if (*remaining_moves_p == 0 && picked_line != -1 && picked_column != -1)
         {
             size hovered_size = get_piece_size(game, picked_line, picked_column);
 
             if (hovered_size != NONE)
             {
-                ask_action(game, rmoves, hovered_size);
+                ask_action(game, remaining_moves_p, hovered_size);
             }
         }
     }
@@ -217,7 +272,7 @@ bool play(board game, int *rmoves)
 }
 
 bool game_turn(board game, player *current_player)
-{   
+{
     show_board(game);
     announce_turn(*current_player);
 
