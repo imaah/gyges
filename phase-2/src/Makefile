@@ -21,6 +21,8 @@ game.o: game.c
 board.o: board.c
 	$(CC) $(FLAGS) board.c 
 
+move:
+	mv $(OBJS) $(OUT) ../build/
 
 clean:
 	rm -f $(OBJS) $(OUT)
