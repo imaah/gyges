@@ -15,7 +15,7 @@ Pour construire le projet, exécutez ``make`` dans le terminal du dossier du pro
 
 ### Latest Build :
 For linux : [`gyges.out`](https://github.com/myimah/gyges/tree/main/phase-1/build/gyges.out)  
-For window : not available yet
+For window : pas encore disponible
 
 ## Phase 2 :
 A partir du [``board.h``](https://github.com/myimah/gyges/tree/main/fichiers-fournis/board.h) fourni par Paul DORBEC recréer le [``board.o``](https://github.com/myimah/gyges/tree/main/fichiers-fournis/board.h) de la phase 1.
@@ -27,5 +27,5 @@ Voir [``Makefile``](https://github.com/myimah/gyges/tree/main/phase-2/src/Makefi
 Pour construire le projet, exécutez ``make`` dans le terminal du dossier du projet.
 
 ### Latest Build :
-For linux : [`gyges.out`](https://github.com/myimah/gyges/tree/main/phase-1/build/gyges.out)  
-For window : not available yet
+For linux : [`gyges.out`](https://github.com/myimah/gyges/tree/main/phase-2/build/gyges.out)  
+For window : pas encore disponible
