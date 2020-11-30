@@ -164,7 +164,7 @@ void announce_winner(board game)
 	// Getting the winner of the game
 	player winner = get_winner(game);
 
-	printf("Bravo ");
+	printf("\n\n\n\n  Bravo ");
 
 	// Checking which player won, to announce the winner in a colored message according to the winner's color
 	if (winner == SOUTH_P)
@@ -371,7 +371,7 @@ bool confirm(char *prompt)
 
 bool confirm_swap()
 {
-	return confirm("Voulez-vous vraiment échanger la pièce ?[O]UI/[N]ON");
+	return confirm("Voulez-vous vraiment échanger la pièce ?[O]ui/[N]on ");
 }
 
 bool confirm_continue()

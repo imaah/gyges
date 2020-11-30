@@ -280,8 +280,9 @@ player next_player(player current_player)
 	return SOUTH_P;
 }
 
-int * move(direction dir) {
-	int movement[2];
+int *move(direction dir)
+{
+	static int movement[2];
 
 	switch (dir)
 	{
@@ -298,8 +299,8 @@ int * move(direction dir) {
 		movement[1] = 1;
 		break;
 	case WEST:
-		movement[0] = -1;
-		movement[1] = 0;
+		movement[0] = 0;
+		movement[1] = -1;
 		break;
 	default:
 		movement[0] = 0;
@@ -308,43 +309,72 @@ int * move(direction dir) {
 	}
 
 	return movement;
-} 
+}
 
 bool is_move_possible(board game, direction direction)
 {
 	int line = picked_piece_line(game);
 	int column = picked_piece_column(game);
 
-	int dir[2] = move(direction);
+	int *dir = move(direction);
 
-	if(direction == GOAL) {
-		if(picked_piece_owner(game) == NORTH_P && line == 0 && movement_left(game) == 1) {
+	if (direction == GOAL)
+	{
+		if (picked_piece_owner(game) == NORTH_P && line == 0 && movement_left(game) == 1)
+		{
+			return true;
+		} else if(picked_piece_owner(game) == SOUTH_P && line == 5 && movement_left(game) == 1) {
 			return true;
 		}
-	} else if(in_board(line + dir[0], column + dir[1])) {
-		if(picked_piece_size(game) == ONE || movement_left(game) == 1) {
+	}
+	else if (in_board(line + dir[0], column + dir[1]))
+	{
+		if (picked_piece_size(game) == ONE || movement_left(game) == 1)
+		{
 			return true;
-		} else if(get_piece_size(game, line + dir[0], column + dir[1]) == NONE) {
+		}
+		else if (get_piece_size(game, line + dir[0], column + dir[1]) == NONE)
+		{
 			return true;
-		} 
+		}
 	}
 
 	return false;
 }
 
+void reset_game_move(board game)
+{
+
+	(*game).grid[picked_piece_line(game)][picked_piece_column(game)] = picked_piece_size(game);
+	(*game).picked_line = -1;
+	(*game).picked_column = -1;
+	(*game).picked_owner = NO_PLAYER;
+	(*game).picked_size = NONE;
+	(*game).origin_line = -1;
+	(*game).origin_column = -1;
+
+	for (int i = 0; i < 3; i++)
+	{
+		(*game).moves[i] = -1;
+	}
+}
+
 return_code move_piece(board game, direction direction)
 {
-	int dir[2] = movement(direction);
-	
-	if(picked_piece_owner(game) == NO_PLAYER) {
+	int *dir = move(direction);
+
+	if (picked_piece_owner(game) == NO_PLAYER)
+	{
 		return EMPTY;
 	}
-	
-	if(!in_board(picked_piece_line(game) + dir[0], picked_piece_column(game) + dir[1])) {
+
+	if (!in_board(picked_piece_line(game) + dir[0], picked_piece_column(game) + dir[1]))
+	{
 		return PARAM;
 	}
 
-	if (!is_move_possible(game, direction)) {
+	if (!is_move_possible(game, direction))
+	{
 		return FORBIDDEN;
 	}
 
@@ -358,7 +388,6 @@ return_code move_piece(board game, direction direction)
 		{
 			(*game).north_goal_occupied = true;
 		}
-		
 	}
 
 	(*game).picked_line += dir[0];
@@ -366,37 +395,94 @@ return_code move_piece(board game, direction direction)
 
 	(*game).movement_left--;
 
-	if(movement_left == 0) 
-	{
-		(*game).grid[picked_piece_line(game)][picked_piece_column(game)] = picked_piece_size(game);
-		(*game).picked_line = -1;
-		(*game).picked_column = -1;
-		(*game).picked_owner = NO_PLAYER;
-		(*game).picked_size = NONE;
-		(*game).origin_line = -1;
-		(*game).origin_column = -1;
-		
-		for(int i = 0; i < 3; i++) {
-			(*game).moves[i] = -1;
+	for(int i = 0; i < 3; i++) {
+		if((*game).moves[i] == -1) {
+			(*game).moves[i] = direction;
+			break;
 		}
 	}
+
+	if ((*game).movement_left == 0)
+	{
+		size hovered_size = get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
+
+		if(hovered_size == NONE) {
+			reset_game_move(game);
+		} else {
+			(*game).movement_left += hovered_size;
+		}
+	}
+
+	return OK;
 }
 
 return_code cancel_movement(board game)
 {
-	(*game).grid[(*game).origin_line][(*game).origin_column] = picked_piece_size(game);
-	// To be continued...
+	if(picked_piece_owner(game) == NO_PLAYER) {
+		return EMPTY;
+	}
+
+	(*game).picked_line = (*game).origin_line;
+	(*game).picked_column = (*game).origin_column;
+
+	reset_game_move(game);
+
 	return OK;
 }
 
 return_code cancel_step(board game)
 {
-	return OK;
 	// To be continued...
-	if (picked_piece_owner(game) == NONE)
+	if (picked_piece_owner(game) == NO_PLAYER)
 	{
 		return EMPTY;
 	}
 
-	
+	int last = -4;
+
+	for(int i = 0; i < 3; i++) {
+		if((*game).moves[i] == -1) {
+			last = i - 1;
+			break;
+		}
+	}
+
+	printf("%d", last);
+
+	if(last != -4) {
+		direction last_move_direction = (*game).moves[last];
+		int *dir = move(last_move_direction);
+
+		(*game).moves[last] = -1;
+		(*game).picked_line += -dir[0];
+		(*game).picked_column += -dir[1];
+	}
+
+	return OK;
+}
+
+return_code swap_piece(board game, int target_line, int target_column)
+{
+	size hovered_size = get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
+
+	if(!in_board(target_line, target_column))
+	{
+		return PARAM;
+	}
+
+	if(hovered_size == NONE) {
+		return EMPTY;
+	}
+
+	size target_size = get_piece_size(game, target_line, target_column);
+
+	if(target_size != NONE) {
+		return FORBIDDEN;
+	}
+
+	(*game).grid[target_line][target_column] = hovered_size;
+
+	reset_game_move(game);
+
+	return OK;
 }

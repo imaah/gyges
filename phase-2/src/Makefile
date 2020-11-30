@@ -3,7 +3,7 @@ SOURCE	= main.c input_output.c game.c board.c
 HEADER	= game.h board.h
 OUT	= gyges.out
 CC	 = gcc
-FLAGS	 = -g -c -Wall
+FLAGS	 = -c -Wall
 LFLAGS	 = 
 
 all: $(OBJS)
@@ -22,7 +22,7 @@ board.o: board.c
 	$(CC) $(FLAGS) board.c 
 
 move:
-	mv $(OBJS) $(OUT) ../build/
+	mv $(OBJS) $(OUT) $(WIN-OUT) ../build/
 
 clean:
 	rm -f $(OBJS) $(OUT)
