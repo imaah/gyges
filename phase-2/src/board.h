@@ -326,7 +326,7 @@ return_code place_piece(board game, size piece, player player, int column);
 
 /**
  * @brief Select a piece to start with.
- *
+ *=
  * The piece must be taken from the player's line. 
  * Whether the player is allowed to play the piece is tested. 
  * The piece is then ready to be moved with the other functions, 

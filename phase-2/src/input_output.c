@@ -22,23 +22,23 @@ int read_number(const char *prompt, int min, int max)
 	}
 
 	char input[MAX_INPUT];
-	int validInput;
+	bool validInput;
 	char bin;
 	int value = -1;
 
 	// Looping until we get a valid input
 	do {
 		printf("%s", prompt);
-
-		validInput = scanf("%s", input);
-
-		if (validInput)
+		
+		if (fgets(input, MAX_INPUT, stdin) != NULL)
 		{
 			value = atoi(input);
 
 			if (min > value || value > max)
 			{
-				validInput = 0;
+				validInput = false;
+			} else {
+				validInput = true;
 			}
 		}
 		// Filling the overflow into a bin
@@ -55,7 +55,7 @@ char read_char(const char *prompt, int args_count, ...)
 {
 	va_list valist;
 	char bin;
-	int validInput;
+	bool validInput;
 	char input[MAX_INPUT];
 
 	// Avoiding negative args
@@ -85,10 +85,8 @@ char read_char(const char *prompt, int args_count, ...)
 	do {
 		printf("%s", prompt);
 
-		validInput = scanf("%s", input);
-
 		// If the input is correct
-		if (validInput)
+		if (fgets(input, MAX_INPUT, stdin) != NULL)
 		{
 			// Getting only the first char, in case the player wrote something like "Nord" instead of "N"
 			value = toupper(input[0]);
@@ -99,7 +97,7 @@ char read_char(const char *prompt, int args_count, ...)
 				for (int i = 0; i < args_count; i++)
 				{
 				 		// If the inputed char is a possible action, return it
-					if ((int) value == (int) args[i])
+					if (value == args[i])
 					{
 						return value;
 					}
@@ -111,11 +109,12 @@ char read_char(const char *prompt, int args_count, ...)
 				return value;
 			}
 
-			validInput = 0;
+			validInput = false;
 		}
 		// Filling the bin with the potential overflow
 		else
 		{
+			validInput = false;
 			scanf("%s", &bin);
 		}
 	} while (!validInput);
