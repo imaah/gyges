@@ -350,6 +350,7 @@ action get_action()
 			break;
 		case 'C':
 			action_i = CONTINUE;
+			break;
 	}
 
 	return action_i;
