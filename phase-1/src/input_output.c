@@ -62,23 +62,29 @@ char read_char(const char *prompt, int args_count, ...)
 		{
 			// Getting only the first char, in case the player wrote something like "Nord" instead of "N"
 			value = toupper(input[0]);
-			// If there are multiple letters that could be returned, check which one has been entered
-			if (args_count > 0)
+
+			// Checking if the len of the inputted value is 1 (the character + '\0')
+			int len = strlen(input);
+			if (len == 2)
 			{
-				// Looping through all possible values to be returned, to see if the input is one of them
-				for (int i = 0; i < args_count; i++)
+				// If there are multiple letters that could be returned, check which one has been entered
+				if (args_count > 0)
 				{
-					// If the inputed char is a possible action, return it
-					if (value == args[i])
+					// Looping through all possible values to be returned, to see if the input is one of them
+					for (int i = 0; i < args_count; i++)
 					{
-						return value;
+						// If the inputed char is a possible action, return it
+						if (value == args[i])
+						{
+							return value;
+						}
 					}
 				}
-			}
-			// If there is only one letter to return, return it
-			else
-			{
-				return value;
+				// If there is only one letter to return, return it
+				else
+				{
+					return value;
+				}
 			}
 
 			validInput = false;
@@ -351,4 +357,3 @@ bool confirm_continue()
 {
 	return confirm("Voulez-vous vraiment continuer à déplacer la pièce ? [O]ui/[N]on ");
 }
-

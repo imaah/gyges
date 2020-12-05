@@ -4,3 +4,4 @@ phase-2/src/*.exe
 phase-2/src/*.o
 phase-2/src/*.out
 phase-2/src/*.exe
+*.tar.gz
