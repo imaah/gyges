@@ -351,3 +351,4 @@ bool confirm_continue()
 {
 	return confirm("Voulez-vous vraiment continuer à déplacer la pièce ? [O]ui/[N]on ");
 }
+
