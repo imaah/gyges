@@ -7,7 +7,7 @@
 
 /**
  * @file main.c
- * @brief Main loop of the game.* 
+ * @brief Main loop of the game.
  * @author Guibout & Morisse
  */
 int main(void)

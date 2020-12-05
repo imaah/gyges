@@ -10,6 +10,7 @@
  * @brief Main loop of the game.* 
  * @author Guibout & Morisse
  */
+
 int main(void)
 {
     // Running the game until we have a winner

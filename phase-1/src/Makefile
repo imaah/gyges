@@ -1,19 +1,22 @@
-OBJS   = main.o input_output.o game.o board.o 
+OBJS   = main.o input_output.o game.o board.o
 TODEL  = main.o input_output.o game.o
 SOURCE = main.c input_output.c game.c
 HEADER = input_output.h board.h game.h
 OUT    = gyges.out
 CC     = gcc
-FLAGS  = -c -Wall
+FLAGS  = -c -Wall -pedantic -Wextra
 
 all: $(OBJS)
-	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
+	$(CC) $(OBJS) -o $(OUT)
 
 main.o: main.c
 	$(CC) $(FLAGS) main.c
 
 input_output.o: input_output.c
 	$(CC) $(FLAGS) input_output.c
+
+game.o: game.c
+	$(CC) $(FLAGS) game.c
 
 clean:
 	rm -f $(OUT) $(TODEL)

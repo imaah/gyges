@@ -16,33 +16,34 @@ void initialize_game(board game, player *player_p)
         bool success = false;
 
         show_board(game);
-        printf("\e[0;31m%d\e[0m/12\n", i);
+        printf("\033[0;31m%d\033[0m/12\n", i);
         announce_turn(current);
 
         printf("[");
 
-        for(int i = 0; i < NB_SIZE; i++) {
+        for (int i = 0; i < NB_SIZE; i++)
+        {
             int available = nb_pieces_available(game, i + 1, current);
 
-            printf("\e[0;36m%d\e[0m : \e[1;32m%d\e[0m restante", i + 1, available);
+            printf("\033[0;36m%d\033[0m : \033[1;32m%d\033[0m restante", i + 1, available);
 
-            if(available > 1) {
+            if (available > 1)
+            {
                 printf("s");
             }
 
-            if(i < NB_SIZE - 1) {
+            if (i < NB_SIZE - 1)
+            {
                 printf(" ; ");
             }
         }
 
         printf("]\n\n");
 
-
         // Repeats until the player inputs a correct value
         do
         {
             return_code code;
-
 
             column = get_column();
             size_p = get_size();
@@ -93,7 +94,7 @@ size choose_piece(board game, player current_player)
         {
             picked_line = northmost_occupied_line(game);
         }
-        printf("Vous jouez sur la ligne \e[1;33m%d\e[0m\n", picked_line + 1);
+        printf("Vous jouez sur la ligne \033[1;33m%d\033[0m\n", picked_line + 1);
 
         // Reseting the total piece in a row to 0
         int placed_piece = 0;
@@ -210,7 +211,7 @@ bool play(board game, int *remaining_moves_p)
     int move_done = 0;
     while (*remaining_moves_p != 0)
     {
-        direction dir;
+        int dir;
         bool can_move = false;
 
         // Showing how many moves are left
@@ -220,11 +221,11 @@ bool play(board game, int *remaining_moves_p)
 
             if (*remaining_moves_p > 1)
             {
-                printf("[\e[1;31m%d\e[0m déplacements restants]\n", *remaining_moves_p);
+                printf("[\033[1;31m%d\033[0m déplacements restants]\n", *remaining_moves_p);
             }
             else
             {
-                printf("[\e[1;31m%d\e[0m déplacement restant]\n", *remaining_moves_p);
+                printf("[\033[1;31m%d\033[0m déplacement restant]\n", *remaining_moves_p);
             }
 
             // Asking the player in which direction he wants to play
