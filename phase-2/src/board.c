@@ -44,31 +44,31 @@ void clear_game(board game)
 	{
 		for (int j = 0; j < DIMENSION - 1; j++)
 		{
-			(*game).grid[i][j] = NONE;
+			game->grid[i][j] = NONE;
 		}
 	}
-	(*game).picked_owner = NO_PLAYER;
-	(*game).picked_column = -1;
-	(*game).picked_line = -1;
-	(*game).picked_size = NONE;
+	game->picked_owner = NO_PLAYER;
+	game->picked_column = -1;
+	game->picked_line = -1;
+	game->picked_size = NONE;
 
-	(*game).south_goal_occupied = false;
-	(*game).north_goal_occupied = false;
+	game->south_goal_occupied = false;
+	game->north_goal_occupied = false;
 
-	(*game).movement_left = 0;
+	game->movement_left = 0;
 
 	for (int i = 0; i < 3; i++)
 	{
-		(*game).moves[i] = -1;
+		game->moves[i] = -1;
 	}
 
-	(*game).origin_line = -1;
-	(*game).origin_column = -1;
+	game->origin_line = -1;
+	game->origin_column = -1;
 
 	for (int i = 0; i < NB_SIZE; i++)
 	{
-		(*game).pieces_left[SOUTH_P - 1][i] = NB_INITIAL_PIECES;
-		(*game).pieces_left[NORTH_P - 1][i] = NB_INITIAL_PIECES;
+		game->pieces_left[SOUTH_P - 1][i] = NB_INITIAL_PIECES;
+		game->pieces_left[NORTH_P - 1][i] = NB_INITIAL_PIECES;
 	}
 }
 
@@ -106,16 +106,16 @@ size get_piece_size(board game, int line, int column)
 		return NONE;
 	}
 
-	return (*game).grid[line][column];
+	return game->grid[line][column];
 }
 
 player get_winner(board game)
 {
-	if ((*game).north_goal_occupied)
+	if (game->north_goal_occupied)
 	{
 		return SOUTH_P;
 	}
-	else if ((*game).south_goal_occupied)
+	else if (game->south_goal_occupied)
 	{
 		return NORTH_P;
 	}
@@ -155,27 +155,27 @@ int northmost_occupied_line(board game)
 
 player picked_piece_owner(board game)
 {
-	return (*game).picked_owner;
+	return game->picked_owner;
 }
 
 size picked_piece_size(board game)
 {
-	return (*game).picked_size;
+	return game->picked_size;
 }
 
 int picked_piece_line(board game)
 {
-	return (*game).picked_line;
+	return game->picked_line;
 }
 
 int picked_piece_column(board game)
 {
-	return (*game).picked_column;
+	return game->picked_column;
 }
 
 int movement_left(board game)
 {
-	return (*game).movement_left;
+	return game->movement_left;
 }
 
 int nb_pieces_available(board game, size piece, player player)
@@ -184,7 +184,7 @@ int nb_pieces_available(board game, size piece, player player)
 	{
 		return -1;
 	}
-	return (*game).pieces_left[player - 1][piece - 1];
+	return game->pieces_left[player - 1][piece - 1];
 }
 
 return_code place_piece(board game, size piece, player current_player, int column)
@@ -217,8 +217,8 @@ return_code place_piece(board game, size piece, player current_player, int colum
 		return FORBIDDEN;
 	}
 
-	(*game).grid[line][column] = piece;
-	(*game).pieces_left[current_player - 1][piece - 1]--;
+	game->grid[line][column] = piece;
+	game->pieces_left[current_player - 1][piece - 1]--;
 
 	return OK;
 }
@@ -257,15 +257,15 @@ return_code pick_piece(board game, player current_player, int line, int column)
 		return FORBIDDEN;
 	}
 
-	(*game).picked_line = line;
-	(*game).picked_column = column;
-	(*game).picked_size = piece_size;
-	(*game).picked_owner = current_player;
-	(*game).origin_line = line;
-	(*game).origin_column = column;
-	(*game).movement_left = piece_size;
-	(*game).grid[line][column] = NONE;
-
+	game->picked_line = line;
+	game->picked_column = column;
+	game->picked_size = piece_size;
+	game->picked_owner = current_player;
+	game->origin_line = line;
+	game->origin_column = column;
+	game->movement_left = piece_size;
+	game->grid[line][column] = NONE;
+	
 	return OK;
 }
 
@@ -346,17 +346,17 @@ bool is_move_possible(board game, direction direction)
 void reset_game_move(board game)
 {
 
-	(*game).grid[picked_piece_line(game)][picked_piece_column(game)] = picked_piece_size(game);
-	(*game).picked_line = -1;
-	(*game).picked_column = -1;
-	(*game).picked_owner = NO_PLAYER;
-	(*game).picked_size = NONE;
-	(*game).origin_line = -1;
-	(*game).origin_column = -1;
+	game->grid[picked_piece_line(game)][picked_piece_column(game)] = picked_piece_size(game);
+	game->picked_line = -1;
+	game->picked_column = -1;
+	game->picked_owner = NO_PLAYER;
+	game->picked_size = NONE;
+	game->origin_line = -1;
+	game->origin_column = -1;
 
 	for (int i = 0; i < 3; i++)
 	{
-		(*game).moves[i] = -1;
+		game->moves[i] = -1;
 	}
 }
 
@@ -383,39 +383,37 @@ return_code move_piece(board game, direction direction)
 	{
 		if (picked_piece_owner(game) == NORTH_P)
 		{
-			(*game).south_goal_occupied = true;
+			game->south_goal_occupied = true;
 		}
 		else
 		{
-			(*game).north_goal_occupied = true;
+			game->north_goal_occupied = true;
 		}
 	}
 
-	(*game).picked_line += dir[0];
-	(*game).picked_column += dir[1];
+	game->picked_line += dir[0];
+	game->picked_column += dir[1];
 
-	(*game).movement_left--;
+	game->movement_left--;
 
 	for (int i = 0; i < 3; i++)
 	{
-		if ((*game).moves[i] == -1)
+		if (game->moves[i] == -1)
 		{
-			(*game).moves[i] = direction;
+			game->moves[i] = direction;
 			break;
 		}
 	}
 
-	if ((*game).movement_left == 0)
+	if (game->movement_left == 0)
 	{
 		size hovered_size = get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
 
 		if (hovered_size == NONE)
 		{
 			reset_game_move(game);
-		}
-		else
-		{
-			(*game).movement_left = 0;
+		} else {
+			game->movement_left += hovered_size;
 		}
 	}
 
@@ -429,8 +427,8 @@ return_code cancel_movement(board game)
 		return EMPTY;
 	}
 
-	(*game).picked_line = (*game).origin_line;
-	(*game).picked_column = (*game).origin_column;
+	game->picked_line = game->origin_line;
+	game->picked_column = game->origin_column;
 
 	reset_game_move(game);
 
@@ -447,10 +445,8 @@ return_code cancel_step(board game)
 
 	int last = -4;
 
-	for (int i = 0; i < 3; i++)
-	{
-		if ((*game).moves[i] == -1)
-		{
+	for(int i = 0; i < 3; i++) {
+		if(game->moves[i] == -1) {
 			last = i - 1;
 			break;
 		}
@@ -458,14 +454,13 @@ return_code cancel_step(board game)
 
 	printf("%d", last);
 
-	if (last != -4)
-	{
-		direction last_move_direction = (*game).moves[last];
+	if(last != -4) {
+		direction last_move_direction = game->moves[last];
 		int *dir = move(last_move_direction);
 
-		(*game).moves[last] = -1;
-		(*game).picked_line += -dir[0];
-		(*game).picked_column += -dir[1];
+		game->moves[last] = -1;
+		game->picked_line += -dir[0];
+		game->picked_column += -dir[1];
 	}
 
 	return OK;
@@ -492,7 +487,7 @@ return_code swap_piece(board game, int target_line, int target_column)
 		return FORBIDDEN;
 	}
 
-	(*game).grid[target_line][target_column] = hovered_size;
+	game->grid[target_line][target_column] = hovered_size;
 
 	reset_game_move(game);
 

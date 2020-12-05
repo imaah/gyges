@@ -1,4 +1,6 @@
 phase-1/src/*.o
 phase-1/src/*.out
+phase-2/src/*.exe
 phase-2/src/*.o
 phase-2/src/*.out
+phase-2/src/*.exe
