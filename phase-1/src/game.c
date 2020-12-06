@@ -67,6 +67,7 @@ void initialize_game(board game, player *player_p)
                 // The user input is correct so the loop will stop
                 success = true;
             }
+
         } while (!success);
 
         // It is the next player turn

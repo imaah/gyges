@@ -55,7 +55,8 @@ char read_char(const char *prompt, int args_count, ...)
 	// Looping through possible values that could be returned (these are known from the function args)
 	do
 	{
-		printf("%s", prompt);
+		printf("%s\n\033[1;35m>>\033[0m ", prompt);
+		
 
 		// If the input is correct
 		if (fgets(input, MAX_INPUT, stdin) != NULL)
@@ -166,7 +167,7 @@ void show_board(board game)
 	player picked_owner = picked_piece_owner(game);
 
 	// Printing the "Header" of the board
-	printf("\n\n-------------------------------------\n\n");
+	printf("\n\n--------------------------------------\n\n");
 	printf("            \033[1;34mNORD\033[0m\n");
 	printf("      /  /  /  \\  \\  \\\n");
 
@@ -246,7 +247,7 @@ void show_board(board game)
 	// Priting the "Footer" of the board
 	printf("      \\  \\  \\  /  /  /\n");
 	printf("            \033[1;33mSUD\033[0m\n\n");
-	printf("-------------------------------------\n\n");
+	printf("--------------------------------------\n\n");
 }
 
 void announce_turn(player player)
@@ -283,12 +284,12 @@ int get_column()
 
 size get_size()
 {
-	return read_number("Quelle taille de pièce voulez-vous jouer?\n(1/2/3) ", 1, NB_SIZE);
+	return read_number("Quelle taille de pièce voulez-vous jouer (1/2/3) ?", 1, NB_SIZE);
 }
 
 direction get_direction()
 {
-	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ou annuler (A)\n");
+	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ou annuler (A) ");
 }
 
 cancel_type get_cancel_type()
@@ -350,7 +351,7 @@ bool confirm(char *prompt)
 
 bool confirm_swap()
 {
-	return confirm("Voulez-vous vraiment échanger la pièce ?[O]ui/[N]on ");
+	return confirm("Voulez-vous vraiment échanger la pièce ? [O]ui/[N]on ");
 }
 
 bool confirm_continue()

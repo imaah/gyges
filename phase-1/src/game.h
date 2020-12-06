@@ -1,3 +1,6 @@
+#ifndef _GAME_H_
+#define _GAME_H_
+
 #include "board.h"
 
 /**
@@ -72,3 +75,5 @@ bool play(board game, int *rmoves);
  * @returns whether the game is won by a player or not
  */
 bool game_turn(board game, player *current);
+
+#endif
