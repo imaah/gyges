@@ -13,6 +13,8 @@
 
 int main(void)
 {
+	printf("\x1b[2J");
+
     // Running the game until we have a winner
     bool running = true;
     board game = new_game();

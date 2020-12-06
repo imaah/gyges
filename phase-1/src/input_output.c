@@ -55,12 +55,13 @@ char read_char(const char *prompt, int args_count, ...)
 	// Looping through possible values that could be returned (these are known from the function args)
 	do
 	{
-		printf("%s\n\033[1;35m>>\033[0m ", prompt);
+		printf("\033[0m%s\n\033[1;35m>>\033[0m \033[0;96m", prompt);
 		
 
 		// If the input is correct
 		if (fgets(input, MAX_INPUT, stdin) != NULL)
 		{
+			printf("\033[0m");
 			// Getting only the first char, in case the player wrote something like "Nord" instead of "N"
 			value = toupper(input[0]);
 
@@ -97,7 +98,7 @@ char read_char(const char *prompt, int args_count, ...)
 			scanf("%s", &bin);
 		}
 	} while (!validInput);
-
+	printf("\033[0m");
 	return value;
 }
 
@@ -155,7 +156,7 @@ void announce_winner(board game)
 		printf("\033[1;34mNORD");
 	}
 
-	printf("\033[0m !\nTu as remporté cette partie !!!🎉\n");
+	printf("\033[0m !\nTu as remporté cette partie !!! 🎉\n\n");
 }
 
 void show_board(board game)
