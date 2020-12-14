@@ -24,3 +24,7 @@ clean:
 move:
 	mv $(TODEL) $(OUT) ../build/
 	cp board.o ../build/
+
+tar:
+	tar -czvf gyges-phase-1-Clément_GUIBOUT-Esteban_MORISSE.tar.gz *
+	mv gyges-phase-1-Clément_GUIBOUT-Esteban_MORISSE.tar.gz /media/sf_shared

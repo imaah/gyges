@@ -215,20 +215,20 @@ bool play(board game, int *remaining_moves_p)
         int dir;
         bool can_move = false;
 
+        show_board(game);
+
         // Showing how many moves are left
+        if (*remaining_moves_p > 1)
+        {
+            printf("[\033[1;31m%d\033[0m déplacements restants]\n", *remaining_moves_p);
+        }
+        else
+        {
+            printf("[\033[1;31m%d\033[0m déplacement restant]\n", *remaining_moves_p);
+        }
+
         do
         {
-            show_board(game);
-
-            if (*remaining_moves_p > 1)
-            {
-                printf("[\033[1;31m%d\033[0m déplacements restants]\n", *remaining_moves_p);
-            }
-            else
-            {
-                printf("[\033[1;31m%d\033[0m déplacement restant]\n", *remaining_moves_p);
-            }
-
             // Asking the player in which direction he wants to play
             dir = get_direction();
 
