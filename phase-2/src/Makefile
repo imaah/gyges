@@ -1,8 +1,8 @@
-OBJS	= main.o input_output.o game.o board.o
-SOURCE	= main.c input_output.c game.c board.c
-HEADER	= game.h board.h
-OUT	= gyges.out
-CC	 = gcc
+OBJS	 = main.o input_output.o game.o board.o
+SOURCE	 = main.c input_output.c game.c board.c
+HEADER	 = game.h board.h
+OUT	     = gyges.out
+CC	     = gcc
 FLAGS	 = -c -Wall
 LFLAGS	 = 
 
