@@ -8,7 +8,7 @@
  *
  *\brief Source code associated with \ref board.h
  *
- *\author Guibout &Morisse
+ *\author Guibout & Morisse
  */
 
 /**
