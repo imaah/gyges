@@ -9,6 +9,10 @@
 #include "board.h"
 #include "input_output.h"
 
+#ifndef MAX_INPUT
+#define MAX_INPUT 255
+#endif
+
 int read_number(const char *prompt, int min, int max)
 {
 	int value;
@@ -55,30 +59,38 @@ char read_char(const char *prompt, int args_count, ...)
 	// Looping through possible values that could be returned (these are known from the function args)
 	do
 	{
-		printf("%s", prompt);
+		printf("\033[0m%s\n\033[1;35m>>\033[0m \033[0;96m", prompt);
+		
 
 		// If the input is correct
 		if (fgets(input, MAX_INPUT, stdin) != NULL)
 		{
+			printf("\033[0m");
 			// Getting only the first char, in case the player wrote something like "Nord" instead of "N"
 			value = toupper(input[0]);
-			// If there are multiple letters that could be returned, check which one has been entered
-			if (args_count > 0)
+
+			// Checking if the len of the inputted value is 1 (the character + '\0')
+			int len = strlen(input);
+			if (len == 2)
 			{
-				// Looping through all possible values to be returned, to see if the input is one of them
-				for (int i = 0; i < args_count; i++)
+				// If there are multiple letters that could be returned, check which one has been entered
+				if (args_count > 0)
 				{
-					// If the inputed char is a possible action, return it
-					if (value == args[i])
+					// Looping through all possible values to be returned, to see if the input is one of them
+					for (int i = 0; i < args_count; i++)
 					{
-						return value;
+						// If the inputed char is a possible action, return it
+						if (value == args[i])
+						{
+							return value;
+						}
 					}
 				}
-			}
-			// If there is only one letter to return, return it
-			else
-			{
-				return value;
+				// If there is only one letter to return, return it
+				else
+				{
+					return value;
+				}
 			}
 
 			validInput = false;
@@ -90,7 +102,7 @@ char read_char(const char *prompt, int args_count, ...)
 			scanf("%s", &bin);
 		}
 	} while (!validInput);
-
+	printf("\033[0m");
 	return value;
 }
 
@@ -148,19 +160,21 @@ void announce_winner(board game)
 		printf("\033[1;34mNORD");
 	}
 
-	printf("\033[0m !\nTu as remporté cette partie !!!🎉\n");
+	printf("\033[0m !\nTu as remporté cette partie !!! 🎉\n\n");
 }
 
 void show_board(board game)
 {
+	// Clears the console
 	printf("\x1b[2J");
+
 	// Getting the current picked piece to print it in color and differently
 	int picked_line = picked_piece_line(game);
 	int picked_column = picked_piece_column(game);
 	player picked_owner = picked_piece_owner(game);
 
 	// Printing the "Header" of the board
-	printf("\n\n-------------------------------------\n\n");
+	printf("\n\n--------------------------------------\n\n");
 	printf("            \033[1;34mNORD\033[0m\n");
 	printf("      /  /  /  \\  \\  \\\n");
 
@@ -240,7 +254,7 @@ void show_board(board game)
 	// Priting the "Footer" of the board
 	printf("      \\  \\  \\  /  /  /\n");
 	printf("            \033[1;33mSUD\033[0m\n\n");
-	printf("-------------------------------------\n\n");
+	printf("--------------------------------------\n\n");
 }
 
 void announce_turn(player player)
@@ -277,12 +291,12 @@ int get_column()
 
 size get_size()
 {
-	return read_number("Quelle taille de pièce voulez-vous jouer?\n(1/2/3) ", 1, NB_SIZE);
+	return read_number("Quelle taille de pièce voulez-vous jouer (1/2/3) ?", 1, NB_SIZE);
 }
 
 direction get_direction()
 {
-	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ou annuler (A)\n");
+	return read_direction("Choisissez une direction (N,S,E,O), l'arrivée (B) ou annuler (A) ");
 }
 
 cancel_type get_cancel_type()
@@ -344,7 +358,7 @@ bool confirm(char *prompt)
 
 bool confirm_swap()
 {
-	return confirm("Voulez-vous vraiment échanger la pièce ?[O]ui/[N]on ");
+	return confirm("Voulez-vous vraiment échanger la pièce ? [O]ui/[N]on ");
 }
 
 bool confirm_continue()

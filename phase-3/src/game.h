@@ -2,6 +2,12 @@
 #define _GAME_H_
 
 #include "board.h"
+#include "game_driver.h"
+
+#define ERR_SHOWTIME 40
+#define INFO_SHOWTIME 40
+
+void handle_click(Env *env, int line, int column);
 
 /**
  * \file game.h
@@ -38,7 +44,7 @@ void initialize_game(board game, player *p);
  */
 int get_piece(board game, player current);
 
-/** 
+/**
  * @brief Asks if the player wants to swap the piece or continue moving.
  * 
  * If the player's last move of a piece happens to be on the same cell of another cell, he can etheir swap his

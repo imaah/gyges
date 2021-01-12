@@ -59,11 +59,11 @@ typedef struct board_s* board;
  * They are ordered by increasing size, so that they can be compared with < or >.
  */
 enum sizes_e {
-	/// no size, for representing no piece
-	NONE, /// size 1
-	ONE, /// size 2
-	TWO, /// size 3
-	THREE
+	/// no size, to represent no piece
+	NONE, // no piece selected
+	ONE,  // size 1
+	TWO,  // size 2
+	THREE // size 3
 	}; 
 typedef enum sizes_e size;
 /*
@@ -435,6 +435,7 @@ return_code cancel_movement(board game);
  */
 return_code cancel_step(board game);
 
+size get_goal_piece(board game, player player);
 
 /**@}*/
 

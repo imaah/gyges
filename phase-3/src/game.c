@@ -2,7 +2,82 @@
 #include <stdio.h>
 
 #include "board.h"
+#include "game.h"
 #include "input_output.h"
+
+
+void ini_select_spot(Env *env, int line, int column) {
+    if(get_piece_size(env->game, line, column) == NONE) {
+
+        if((env->current_player == NORTH_P && line != 5) || (env->current_player == SOUTH_P && line != 0)) {
+            env->err_msg = "Emplacement non-valide !";
+            env->err_showtime = ERR_SHOWTIME;
+        } else {
+            env->current_state = INI_SELECT_SIZE;
+            env->selected_column = column;
+            env->err_showtime = 0;
+        }
+
+    } else {
+        env->err_msg = "Emplacement non-vide !";
+        env->err_showtime = ERR_SHOWTIME;
+    }
+}
+
+void ini_select_size(Env *env, size chosen_size) {
+
+}
+
+void mid_select_spot(Env * env, int line, int column)
+{
+    if (get_piece_size(env->game, line, column) != NONE)
+    {
+        if ((env->current_player == NORTH_P && line == northmost_occupied_line(env->game)) || (env->current_player == SOUTH_P && line == southmost_occupied_line(env->game)))
+        {
+            env->picked_piece_line = line;
+            env->picked_piece_column = column;
+            env->picked_piece_size = get_piece_size(env->game, env->picked_piece_line, env->picked_piece_column);
+            env->remaining_moves = env->picked_piece_size;
+        }
+        else
+        {
+            env->err_msg = "Choississez une de vos pièces";
+            env->err_showtime = ERR_SHOWTIME;
+        }
+    }
+    else
+    {
+        env->err_msg = "Choississez plutôt une pièce";
+        env->err_showtime = ERR_SHOWTIME;
+    }
+}
+
+void handle_click(Env *env, int line, int column) {
+
+    if(env->current_state == INI_SELECT_SPOT) {
+        ini_select_spot(env, line, column);
+    }
+
+    /*// If the game is its initialization phase
+    if (game_state == INI_PLACE)
+    {
+        if (current_player == NORTH_P)
+        {
+
+        }
+        else if (currect_player == SOUTH_P)
+        {
+
+        }
+        else
+        {
+            print_error("Ce n'est à aucun joueur de jouer!");
+        }
+
+        // Changer le gamestate
+    }*/
+}
+
 
 void initialize_game(board game, player *player_p)
 {

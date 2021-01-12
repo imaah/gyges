@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/esteban/gyges/phase-3/src/board.h
+stdbool.h
+-
+
+/home/esteban/gyges/phase-3/src/game.c
+stdbool.h
+-
+stdio.h
+-
+board.h
+/home/esteban/gyges/phase-3/src/board.h
+game.h
+/home/esteban/gyges/phase-3/src/game.h
+input_output.h
+/home/esteban/gyges/phase-3/src/input_output.h
+
+/home/esteban/gyges/phase-3/src/game.h
+board.h
+/home/esteban/gyges/phase-3/src/board.h
+game_driver.h
+/home/esteban/gyges/phase-3/src/game_driver.h
+
+/home/esteban/gyges/phase-3/src/game_driver.h
+SDL2/SDL.h
+-
+board.h
+/home/esteban/gyges/phase-3/src/board.h
+SDL2/SDL_ttf.h
+-
+
+/home/esteban/gyges/phase-3/src/input_output.h
+board.h
+/home/esteban/gyges/phase-3/src/board.h
+

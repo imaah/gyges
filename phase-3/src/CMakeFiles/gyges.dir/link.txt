@@ -1,0 +1,1 @@
+/usr/bin/cc -std=c99 -g -Wall -lm  -rdynamic CMakeFiles/gyges.dir/main.c.o CMakeFiles/gyges.dir/window.c.o CMakeFiles/gyges.dir/board.c.o CMakeFiles/gyges.dir/game.c.o CMakeFiles/gyges.dir/input_output.c.o  -o gyges  -Wl,-Bstatic -lSDL2main -Wl,-Bdynamic -lSDL2 -lpthread -lSDL2_image -lSDL2_ttf -lm 

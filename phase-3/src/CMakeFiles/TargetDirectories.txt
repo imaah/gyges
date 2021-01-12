@@ -1,0 +1,3 @@
+/home/esteban/gyges/phase-3/src/CMakeFiles/rebuild_cache.dir
+/home/esteban/gyges/phase-3/src/CMakeFiles/edit_cache.dir
+/home/esteban/gyges/phase-3/src/CMakeFiles/gyges.dir
