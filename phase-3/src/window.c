@@ -79,10 +79,8 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[])
 
     env->err_msg = malloc(sizeof(char) * 255);
     env->info_msg = malloc(sizeof(char) * 255);
-
-    place_piece(env->game, ONE, env->current_player, 0);
-    place_piece(env->game, TWO, env->current_player, 1);
-    place_piece(env->game, THREE, env->current_player, 2);
+   
+    env->placed_piece = 0;
 
     return env;
 }
@@ -97,7 +95,7 @@ void set_piece_rect(SDL_Rect *rect, float line, float column)
     rect->w = CELL_SIZE - 10;
 }
 
-void display_message(Env *env, SDL_Renderer *ren, char *message_content, bool is_error)
+void display_info(Env *env, SDL_Renderer *ren, char *message_content, bool is_error)
 {
     SDL_Surface *broadcastMessage;
 
@@ -108,13 +106,13 @@ void display_message(Env *env, SDL_Renderer *ren, char *message_content, bool is
     }
     else
     {
-        SDL_Color color = {RED_COLOR};
+        SDL_Color color = {GREEN_COLOR};
         broadcastMessage = TTF_RenderUTF8_Blended(env->font, message_content, color);
     }
 
     SDL_Texture *message = SDL_CreateTextureFromSurface(ren, broadcastMessage);
 
-    SDL_Rect background = {SCREEN_WIDTH / 2 - 5 - strlen(message_content) * (FONT_SIZE / 9.4), SCREEN_HEIGHT / 4 - FONT_SIZE / 6, strlen(message_content) * (FONT_SIZE / 4.7) + 10, FONT_SIZE / 3};
+    SDL_Rect background = {SCREEN_WIDTH / 2 - 5 - strlen(message_content) * (FONT_SIZE / 15), SCREEN_HEIGHT / 4 - FONT_SIZE / 6, strlen(message_content) * (FONT_SIZE / 7.5) + 10, FONT_SIZE / 4.3};
 
     if (is_error != true)
     {
@@ -130,39 +128,68 @@ void display_message(Env *env, SDL_Renderer *ren, char *message_content, bool is
     SDL_RenderCopy(ren, message, NULL, &background);
 }
 
-void render_piece(SDL_Renderer *ren, Env *env, size piece_size, float line, float column)
+void show_text(Env *env, SDL_Renderer *ren, char *text, SDL_Rect rect, SDL_Color color)
+{
+    SDL_Surface *text_surface = TTF_RenderUTF8_Blended(env->font, text, color);
+    SDL_Texture *text_texture = SDL_CreateTextureFromSurface(ren, text_surface);
+
+    SDL_RenderCopy(ren, text_texture, NULL, &rect);
+}
+
+void render_piece(SDL_Renderer *ren, Env *env, size piece_size, int piece_position, float line, float column)
 {
     SDL_Rect rect;
     set_piece_rect(&rect, line, column);
     if (piece_size != NONE)
     {
-        SDL_Rect crop = {env->normal_piece, (piece_size - 1) * 245, 245, 245};
-
+        SDL_Rect crop = {piece_position, (piece_size - 1) * 245, 245, 245};
         SDL_RenderCopy(ren, env->tilemap, &crop, &rect);
     }
+}
+
+void render_normal_piece(SDL_Renderer *ren, Env *env, size piece_size, float line, float column)
+{
+    render_piece(ren, env, piece_size, env->normal_piece, line, column);
+    // SDL_Rect rect;
+    // set_piece_rect(&rect, line, column);
+    // if (piece_size != NONE)
+    // {
+    //     SDL_Rect crop = {env->normal_piece, (piece_size - 1) * 245, 245, 245};
+
+    //     SDL_RenderCopy(ren, env->tilemap, &crop, &rect);
+    // }
 }
 
 void render_selected_piece(SDL_Renderer *ren, Env *env, size piece_size, float line, float column)
 {
-    SDL_Rect rect;
-    set_piece_rect(&rect, line, column);
-    if (piece_size != NONE)
-    {
-        SDL_Rect crop = {env->selected_piece, (piece_size - 1) * 245, 245, 245};
+    render_piece(ren, env, piece_size, env->selected_piece, line, column);
 
-        SDL_RenderCopy(ren, env->tilemap, &crop, &rect);
-    }
+    // SDL_Rect rect;
+    // set_piece_rect(&rect, line, column);
+    // if (piece_size != NONE)
+    // {
+    //     SDL_Rect crop = {env->selected_piece, (piece_size - 1) * 245, 245, 245};
+
+    //     SDL_RenderCopy(ren, env->tilemap, &crop, &rect);
+    // }
 }
 
 void render_hovered_piece(SDL_Renderer *ren, Env *env, size piece_size, float line, float column)
 {
-    SDL_Rect rect;
-    set_piece_rect(&rect, line, column);
-    if (piece_size != NONE)
-    {
-        SDL_Rect crop = {env->hovered_piece, (piece_size - 1) * 245, 245, 245};
-        SDL_RenderCopy(ren, env->tilemap, &crop, &rect);
-    }
+    render_piece(ren, env, piece_size, env->hovered_piece, line, column);
+
+    // SDL_Rect rect;
+    // set_piece_rect(&rect, line, column);
+    // if (piece_size != NONE)
+    // {
+    //     SDL_Rect crop = {env->hovered_piece, (piece_size - 1) * 245, 245, 245};
+    //     SDL_RenderCopy(ren, env->tilemap, &crop, &rect);
+    // }
+}
+
+void render_gray_piece(SDL_Renderer *ren, Env *env, size piece_size, float line, float column)
+{
+    render_piece(ren, env, piece_size, env->gray_piece, line, column);
 }
 
 void render_shadow(Env *env, SDL_Renderer *ren, int line, int column)
@@ -186,8 +213,8 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
     size south_goal_size = get_goal_piece(game, SOUTH_P);
     size north_goal_size = get_goal_piece(game, NORTH_P);
 
-    render_piece(ren, env, south_goal_size, -1, 3.5);
-    render_piece(ren, env, north_goal_size, 6, 3.5);
+    render_normal_piece(ren, env, south_goal_size, -1, 3.5);
+    render_normal_piece(ren, env, north_goal_size, 6, 3.5);
 
     // Getting the mouse position to render a different piece sprite
     int mouse_x, mouse_y;
@@ -195,6 +222,9 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
 
     int hovered_line = (mouse_y - OFFSET) / CELL_SIZE;
     int hovered_column = (mouse_x - OFFSET) / CELL_SIZE;
+
+    int southmost = southmost_occupied_line(env->game);
+    int northmost = northmost_occupied_line(env->game);
 
     for (int line = 0; line < DIMENSION; line++)
     {
@@ -204,12 +234,17 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
             // Getting which piece to place in these coordinates
             size piece = get_piece_size(game, DIMENSION - line - 1, column);
 
-            if (5 - line == picked_line && column == picked_column && picked_owner != NO_PLAYER)
+            if (env->current_state == MID_SELECT_PIECE && ((env->current_player == NORTH_P && line != northmost) || (env->current_player == SOUTH_P && line != southmost)))
+            {
+
+                render_gray_piece(ren, env, piece, line, column);
+            }
+            else if (5 - line == picked_line && column == picked_column && picked_owner != NO_PLAYER)
             {
                 // Checking which player is currently holding the piece, to print it according to his color
                 render_selected_piece(ren, env, picked_size, line, column);
             }
-            else if (line == hovered_line && column == hovered_column && env->current_state == MID_SELECT_SPOT)
+            else if (line == hovered_line && column == hovered_column && env->current_state == MID_SELECT_PIECE)
             {
                 // Render the hovered sprite
                 render_hovered_piece(ren, env, piece, line, column);
@@ -217,7 +252,7 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
             else
             {
                 // Render the regular piece icon if no piece is selected
-                render_piece(ren, env, piece, line, column);
+                render_normal_piece(ren, env, piece, line, column);
             }
         }
     }
@@ -249,44 +284,71 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
         int width = SCREEN_WIDTH / 2;
         int height = SCREEN_HEIGHT / 3;
 
+        int padding = 10;
         int mid_width = width / 2;
-        int mid_height = SCREEN_HEIGHT / 3 - height / 2;
+        int mid_height = SCREEN_HEIGHT / 2 - height / 2;
 
-        SDL_Rect rect = {width / 2, height / 2, width, height};
-
-        printf("%d, %d, %d, %d\n", rect.x, rect.y, rect.w, rect.h);
+        SDL_Rect rect = {SCREEN_WIDTH / 2 - width / 2, SCREEN_HEIGHT / 2 - height / 2, width, height};
 
         //SDL_SetSurfaceAlphaMod(ren, 150);
-        SDL_SetRenderDrawColor(ren, TEXT_COLOR, 1);
+        SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(ren, 150, 150, 150, 190);
+        SDL_RenderFillRect(ren, &rect);
+        SDL_Color color = {0, 0, 0, 255};
+
+        SDL_Rect title_rect = {SCREEN_WIDTH / 2 - mid_width + padding, SCREEN_HEIGHT / 2 - height / 2 + padding, width - padding * 2, FONT_SIZE / 2};
+
+        show_text(env, ren, "Choix de la taille de la pièce", title_rect, color);
 
         int gap = 20;
-        int piece_width = (width - gap * 3) / 3;
-
+        int piece_width = ((width - padding * 2) - gap * 2) / 3;
+        int y_offset = 60;
         for (int i = 1; i <= NB_SIZE; i++)
         {
             SDL_Rect crop = {0, (i - 1) * 245, 245, 245};
-            SDL_Rect position = {mid_width - (piece_width * 1.5 + gap + piece_width * i), mid_height, piece_width, piece_width};
+            SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i, mid_height + padding / 2 + y_offset, piece_width, piece_width};
+            SDL_Rect around = {position.x - padding / 2, position.y - padding / 2, position.w + padding, position.h + gap + FONT_SIZE / 2.5};
 
-            if (position.x <= mouse_x && mouse_x <= position.x + position.w && position.y <= mouse_y && mouse_y <= position.x + position.h)
+            if (around.x <= mouse_x && mouse_x <= around.x + around.w && around.y <= mouse_y && mouse_y <= around.y + around.h)
             {
-                SDL_RenderDrawRect(ren, &position);
+                SDL_SetRenderDrawColor(ren, 255, 255, 255, 150);
+                SDL_RenderFillRect(ren, &around);
             }
 
-            if (nb_pieces_available(env->game, i, env->current_player) > 0)
+            SDL_Rect text_pos = {position.x, position.y + piece_width + gap, piece_width, FONT_SIZE / 5};
+            int pieces_available = nb_pieces_available(env->game, i, env->current_player);
+
+            SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
+
+            if (pieces_available > 0)
             {
                 crop.x = env->normal_piece;
+
+                if (pieces_available == 1)
+                {
+                    show_text(env, ren, "1 restante", text_pos, color);
+                }
+                else if (pieces_available == 2)
+                {
+                    show_text(env, ren, "2 restantes", text_pos, color);
+                }
+                else
+                {
+                    show_text(env, ren, "3 restantes", text_pos, color);
+                }
             }
             else
             {
                 crop.x = env->gray_piece;
+                show_text(env, ren, "0 restante", text_pos, color);
             }
 
             SDL_RenderCopy(ren, env->tilemap, &crop, &position);
+            SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
         }
         /*
          * --> x = mid - (piece_w * (nb_pieces * 0.5) + gap * ((nb_piece - 1) * 0.5)) + piece_w * i 
         */
-        SDL_RenderFillRect(ren, &rect);
     }
 
     /*
@@ -304,13 +366,13 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
     if (env->err_showtime > 0)
     {
         env->err_showtime--;
-        display_message(env, ren, env->err_msg, true);
+        display_info(env, ren, env->err_msg, true);
     }
 
     if (env->info_showtime > 0)
     {
         env->info_showtime--;
-        display_message(env, ren, env->info_msg, false);
+        display_info(env, ren, env->info_msg, false);
     }
 
     // SDL_RenderCopy(ren, env->background, NULL, &drect);
@@ -333,7 +395,33 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
         env->clicked_line = 5 - (mouse.y - OFFSET) / CELL_SIZE;
         env->clicked_column = (mouse.x - OFFSET) / CELL_SIZE;
 
-        handle_click(env, env->clicked_line, env->clicked_column);
+        if (env->current_state == INI_SELECT_SIZE)
+        {
+            int width = SCREEN_WIDTH / 2;
+            int height = SCREEN_HEIGHT / 3;
+            int padding = 10;
+            int mid_width = width / 2;
+            int mid_height = SCREEN_HEIGHT / 2 - height / 2;
+            int gap = 20;
+            int piece_width = ((width - padding * 2) - gap * 2) / 3;
+            int y_offset = 60;
+
+            for (int i = 0; i <= NB_SIZE; i++)
+            {
+                SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i, mid_height + padding / 2 + y_offset, piece_width, piece_width};
+                SDL_Rect around = {position.x - padding / 2, position.y - padding / 2, position.w + padding, position.h + gap + FONT_SIZE / 2.5};
+
+                if (around.x <= mouse.x && mouse.x <= around.x + around.w && around.y <= mouse.y && mouse.y <= around.y + around.h)
+                {
+                    ini_select_size(env, i);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            handle_click(env, env->clicked_line, env->clicked_column);
+        }
     }
     else if (e->type == SDL_KEYDOWN)
     {

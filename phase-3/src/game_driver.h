@@ -6,7 +6,7 @@
 enum game_state_e {
     INI_SELECT_SPOT,
     INI_SELECT_SIZE,
-    MID_SELECT_SPOT,
+    MID_SELECT_PIECE,
     MID_MOVE_PIECE
 };
 
@@ -50,6 +50,8 @@ struct Env_t
 
     char *info_msg;
     int info_showtime;
+
+    int placed_piece;
     /* PUT YOUR VARIABLES HERE */
 };
 

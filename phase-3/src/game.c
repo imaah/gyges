@@ -25,7 +25,34 @@ void ini_select_spot(Env *env, int line, int column) {
 }
 
 void ini_select_size(Env *env, size chosen_size) {
+    return_code code = place_piece(env->game, chosen_size, env->current_player, env->selected_column);
 
+    if (code == EMPTY)
+    {
+        env->err_msg = "Une pièce est déjà sur cette case";
+        env->err_showtime = ERR_SHOWTIME;
+    }
+    else if (code == FORBIDDEN)
+    {
+        env->err_msg = "Vous n'avez plus de pièces de cette taille";
+        env->err_showtime = ERR_SHOWTIME;
+    }
+    // Theoritically, this will never be true because params errors are already handled in input_output.h
+    else if (code == PARAM)
+    {
+        env->err_msg = "Cliquez sur une des cases du plateau";
+        env->err_showtime = ERR_SHOWTIME;
+    } else {
+        env->placed_piece++;
+        if (env->placed_piece < 12)
+        {
+            env->current_state = INI_SELECT_SPOT;
+        } else {
+            env->current_state = MID_SELECT_PIECE;   
+        }
+
+        env->current_player = next_player(env->current_player);
+    }
 }
 
 void mid_select_spot(Env * env, int line, int column)
