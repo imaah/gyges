@@ -205,11 +205,18 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
             {
                 render_shadow(env, ren, line, column);
             }
-            else if (env->current_state == MID_SELECT_PIECE && ((env->current_player == NORTH_P && 5 - line != northmost) || (env->current_player == SOUTH_P && 5 - line != southmost)))
+            else if ((env->current_state == MID_SELECT_PIECE) && 
+                     ((env->current_player == NORTH_P && 5 - line != northmost) ||
+                      (env->current_player == SOUTH_P && 5 - line != southmost)
+                     )
+                    )
             {
                 render_gray_piece(ren, env, piece, line, column);
             }
-            else if (5 - line == picked_line && column == picked_column && picked_owner != NO_PLAYER && env->current_state != VICTORY)
+            else if ((5 - line == picked_line) &&
+                     (column == picked_column) &&
+                     (picked_owner != NO_PLAYER) && 
+                     (env->current_state != VICTORY))
             {
                 // Checking which player is currently holding the piece, to print it according to his color
                 render_selected_piece(ren, env, picked_size, line, column);
@@ -351,7 +358,11 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
 
             SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 
-            if (around.x <= mouse_x && mouse_x <= around.x + around.w && around.y <= mouse_y && mouse_y <= around.y + around.h)
+            if ((around.x <= mouse_x) &&
+                (mouse_x <= around.x + around.w) &&
+                (around.y <= mouse_y) &&
+                (mouse_y <= around.y + around.h)
+               )
             {
                 SDL_SetRenderDrawColor(ren, 255, 255, 255, 200);
                 SDL_RenderFillRect(ren, &around);
@@ -510,7 +521,10 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
                 SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i, mid_height + padding / 2 + y_offset, piece_width, piece_width};
                 SDL_Rect around = {position.x - padding / 2, position.y - padding / 2, position.w + padding, position.h + gap + FONT_SIZE / 2.5};
 
-                if (around.x <= mouse.x && mouse.x <= around.x + around.w && around.y <= mouse.y && mouse.y <= around.y + around.h)
+                if ((around.x <= mouse.x) &&
+                    (mouse.x <= around.x + around.w) &&
+                    (around.y <= mouse.y) &&
+                    (mouse.y <= around.y + around.h))
                 {
                     ini_select_size(env, i);
                     break;
@@ -531,7 +545,11 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
                 SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i, mid_height + padding + y_offset, piece_width, piece_width};
                 SDL_Rect around = {position.x - padding / 2, position.y - padding / 2, position.w + padding, position.h + FONT_SIZE / 2.5};
 
-                if (around.x <= mouse.x && mouse.x <= around.x + around.w && around.y <= mouse.y && mouse.y <= around.y + around.h)
+                if ((around.x <= mouse.x) &&
+                    (mouse.x <= around.x + around.w) &&
+                    (around.y <= mouse.y) &&
+                    (mouse.y <= around.y + around.h)
+                   )
                 {
                     if (i == 1)
                     {
@@ -558,7 +576,9 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
             return false;
         }
 
-        if (env->clicked_line == picked_piece_line(env->game) && env->clicked_column == picked_piece_column(env->game))
+        if ((env->clicked_line == picked_piece_line(env->game)) &&
+            (env->clicked_column == picked_piece_column(env->game))
+           )
         {
             if (env->current_state == MID_MOVE_PIECE)
             {
