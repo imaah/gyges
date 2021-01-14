@@ -27,11 +27,37 @@ Il est interdit au cours d’un même mouvement d’entrer deux fois dans la mê
 ##### Rédacteur des règles ci-dessus: Paul Dorbec
 
 # Comment jouer
-### Les cases bleues
+## Touches
+### Clique gauche:
+Pointer un endroit, y exécuter l'action associée listée ci-dessous
+
+### Clique gauche après la fin d'une partie:
+Relancer une partie avec un nouveau plateau
+
+### Touche echap:
+Quitter l'application
+
+## Visuels
+### Les cases avec des lueurs bleues:
 Elles représentent les cases vers lesquelles une pièc peut se déplacer
 
-### Les cases beiges
+### Les cases beiges:
 Les pièces que vous pouvez jouer
 
-### Les cases oranges
-La pièce 
+### Les pièces grisées:
+Les pièces que vous ne pouvez pas jouer à ce tour
+
+### La case orangée:
+La pièce que vous jouez actuellement
+
+### Les pièces beiges avec bord noir:
+Une pièce sous le survol de la souris, pièce que vous pouvez jouer
+
+### L'icone double flèche verticale:
+Rebondir d'autant de pas que la taille de la pièce sur laquelle vous vous trouvez
+
+### L'icone avec une flèche partant d'une pièce:
+Prendre la place de la pièce sur laquelle vous êtes et placer celle-ci ou vous le souhaitez sur le plateau
+
+### Les messages verts autour du plateau:
+Le nombre de déplacement restants qu'il vous reste avec la pièce que vous jouez actuellement, sous condition de ne pas rebondir
