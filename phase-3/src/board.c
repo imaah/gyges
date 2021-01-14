@@ -373,8 +373,8 @@ int *move(direction dir)
 		movement[1] = -1;
 		break;
 	default:
-		movement[0] = 0;
-		movement[1] = 0;
+		movement[0] = -1;
+		movement[1] = -1;
 		break;
 	}
 
@@ -405,7 +405,7 @@ bool is_move_possible(board game, direction direction)
 	// If the player is not trying to do a winning move, it's a regular one
 	else if (in_board(line + dir[0], column + dir[1]))
 	{
-		if (picked_piece_size(game) == ONE || movement_left(game) == 1)
+		if (movement_left(game) == 1)
 		{
 			return true;
 		}
@@ -445,7 +445,7 @@ return_code move_piece(board game, direction direction)
 		return EMPTY;
 	}
 
-	if (!in_board(picked_piece_line(game) + dir[0], picked_piece_column(game) + dir[1]))
+	if (!in_board(picked_piece_line(game) + dir[0], picked_piece_column(game) + dir[1]) && direction != GOAL)
 	{
 		return PARAM;
 	}
@@ -467,6 +467,10 @@ return_code move_piece(board game, direction direction)
 			game->north_goal_occupied = true;
 			game->north_goal = picked_piece_size(game);
 		}
+		game->picked_line = -1;
+		game->picked_column = -1;
+		game->picked_size = NONE;
+		game->picked_owner = NO_PLAYER;
 	}
 	else
 	{
@@ -537,6 +541,12 @@ return_code cancel_step(board game)
 		}
 	}
 
+	size hovered_size = get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
+
+	if(hovered_size != NONE) {
+		game->movement_left -= hovered_size;
+	}
+
 	if (last != -4)
 	{
 		// Going one step back
@@ -546,6 +556,7 @@ return_code cancel_step(board game)
 		game->moves[last] = -1;
 		game->picked_line += -dir[0];
 		game->picked_column += -dir[1];
+		game->movement_left++;
 	}
 
 	return OK;

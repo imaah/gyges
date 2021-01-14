@@ -12,8 +12,8 @@ find_package(SDL2_image REQUIRED)
 
 include_directories(${SDL2_INCLUDE_DIR})
 
-add_executable(gyges main.c window.c board.c game.c input_output.c)
-target_link_libraries(gyges
+add_executable(gyges.out main.c window.c board.c game.c)
+target_link_libraries(gyges.out
 	${SDL2_LIBRARY}
 	${SDL2_IMAGE_LIBRARY}
 	${SDL2_TTF_LIBRARY} m)

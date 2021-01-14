@@ -7,6 +7,15 @@
 #define ERR_SHOWTIME 40
 #define INFO_SHOWTIME 40
 
+enum action_e {
+    SWAP, 
+    CONTINUE
+};
+
+typedef enum action_e action;
+
+void mid_select_action(Env *env, action action);
+
 void ini_select_size(Env *env, size chosen_size);
 
 void handle_click(Env *env, int line, int column);

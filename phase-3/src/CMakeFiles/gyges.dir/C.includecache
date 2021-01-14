@@ -19,10 +19,10 @@ game_driver.h
 /home/esteban/gyges/phase-3/src/game_driver.h
 SDL2/SDL.h
 -
-board.h
-/home/esteban/gyges/phase-3/src/board.h
 SDL2/SDL_ttf.h
 -
+board.h
+/home/esteban/gyges/phase-3/src/board.h
 
 /home/esteban/gyges/phase-3/src/window.c
 SDL2/SDL.h

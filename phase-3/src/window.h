@@ -1,5 +1,3 @@
-// SDL2 Model by aurelien.esnard@u-bordeaux.fr
-
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -29,19 +27,14 @@
 #define TEXT_COLOR 250, 165, 62
 #define RED_COLOR 255, 15, 3
 #define GREEN_COLOR 169, 71, 71
+#define GRAY_COLOR 150, 150, 150
+#define BLUE_COLOR 0, 198, 255
 #define FONT_SIZE 80
 
 #define GYGES_BOARD "assets/gyges-board.png"
-#define GYGES_P1 "assets/gyges-p1.png"
-#define GYGES_P2 "assets/gyges-p2.png"
-#define GYGES_P3 "assets/gyges-p3.png"
-#define GYGES_P1_SELECTED "assets/gyges-p1-selected.png"
-#define GYGES_P2_SELECTED "assets/gyges-p2-selected.png"
-#define GYGES_P3_SELECTED "assets/gyges-p3-selected.png"
-#define GYGES_P1_HOVERED "assets/gyges-p1-hovered.png"
-#define GYGES_P2_HOVERED "assets/gyges-p2-hovered.png"
-#define GYGES_P3_HOVERED "assets/gyges-p3-hovered.png"
 #define TILEMAP "assets/tilemap.png"
+#define SWAP_ICON "assets/swap-icon.png"
+#define CONTINUE_ICON "assets/continue-icon.png"
 
 /* **************************************************************** */
 

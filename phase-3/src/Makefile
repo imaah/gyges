@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named gyges
+# Target rules for targets named gyges.out
 
 # Build rule for target.
-gyges: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 gyges
-.PHONY : gyges
+gyges.out: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gyges.out
+.PHONY : gyges.out
 
 # fast build rule for target.
-gyges/fast:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/build
-.PHONY : gyges/fast
+gyges.out/fast:
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/build
+.PHONY : gyges.out/fast
 
 board.o: board.c.o
 
@@ -129,7 +129,7 @@ board.o: board.c.o
 
 # target to build an object file
 board.c.o:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/board.c.o
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/board.c.o
 .PHONY : board.c.o
 
 board.i: board.c.i
@@ -138,7 +138,7 @@ board.i: board.c.i
 
 # target to preprocess a source file
 board.c.i:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/board.c.i
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/board.c.i
 .PHONY : board.c.i
 
 board.s: board.c.s
@@ -147,7 +147,7 @@ board.s: board.c.s
 
 # target to generate assembly for a file
 board.c.s:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/board.c.s
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/board.c.s
 .PHONY : board.c.s
 
 game.o: game.c.o
@@ -156,7 +156,7 @@ game.o: game.c.o
 
 # target to build an object file
 game.c.o:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/game.c.o
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/game.c.o
 .PHONY : game.c.o
 
 game.i: game.c.i
@@ -165,7 +165,7 @@ game.i: game.c.i
 
 # target to preprocess a source file
 game.c.i:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/game.c.i
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/game.c.i
 .PHONY : game.c.i
 
 game.s: game.c.s
@@ -174,35 +174,8 @@ game.s: game.c.s
 
 # target to generate assembly for a file
 game.c.s:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/game.c.s
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/game.c.s
 .PHONY : game.c.s
-
-input_output.o: input_output.c.o
-
-.PHONY : input_output.o
-
-# target to build an object file
-input_output.c.o:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/input_output.c.o
-.PHONY : input_output.c.o
-
-input_output.i: input_output.c.i
-
-.PHONY : input_output.i
-
-# target to preprocess a source file
-input_output.c.i:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/input_output.c.i
-.PHONY : input_output.c.i
-
-input_output.s: input_output.c.s
-
-.PHONY : input_output.s
-
-# target to generate assembly for a file
-input_output.c.s:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/input_output.c.s
-.PHONY : input_output.c.s
 
 main.o: main.c.o
 
@@ -210,7 +183,7 @@ main.o: main.c.o
 
 # target to build an object file
 main.c.o:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/main.c.o
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/main.c.o
 .PHONY : main.c.o
 
 main.i: main.c.i
@@ -219,7 +192,7 @@ main.i: main.c.i
 
 # target to preprocess a source file
 main.c.i:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/main.c.i
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/main.c.i
 .PHONY : main.c.i
 
 main.s: main.c.s
@@ -228,7 +201,7 @@ main.s: main.c.s
 
 # target to generate assembly for a file
 main.c.s:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/main.c.s
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/main.c.s
 .PHONY : main.c.s
 
 window.o: window.c.o
@@ -237,7 +210,7 @@ window.o: window.c.o
 
 # target to build an object file
 window.c.o:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/window.c.o
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/window.c.o
 .PHONY : window.c.o
 
 window.i: window.c.i
@@ -246,7 +219,7 @@ window.i: window.c.i
 
 # target to preprocess a source file
 window.c.i:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/window.c.i
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/window.c.i
 .PHONY : window.c.i
 
 window.s: window.c.s
@@ -255,7 +228,7 @@ window.s: window.c.s
 
 # target to generate assembly for a file
 window.c.s:
-	$(MAKE) -f CMakeFiles/gyges.dir/build.make CMakeFiles/gyges.dir/window.c.s
+	$(MAKE) -f CMakeFiles/gyges.out.dir/build.make CMakeFiles/gyges.out.dir/window.c.s
 .PHONY : window.c.s
 
 # Help Target
@@ -266,16 +239,13 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... gyges"
+	@echo "... gyges.out"
 	@echo "... board.o"
 	@echo "... board.i"
 	@echo "... board.s"
 	@echo "... game.o"
 	@echo "... game.i"
 	@echo "... game.s"
-	@echo "... input_output.o"
-	@echo "... input_output.i"
-	@echo "... input_output.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

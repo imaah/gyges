@@ -116,6 +116,8 @@ typedef enum direction_e direction;
  */
 player next_player(player current_player);
 
+int *move(direction dir);
+
 /**
  * @brief number of pieces of each size on each player's line at the beginning.
  * Usually, this value is 2.
@@ -162,6 +164,8 @@ board copy_game(board original_game);
  * @param game the game to destroy.
  */
 void destroy_game(board game);
+
+bool in_board(int line, int column);
 
 /**@}*/
 

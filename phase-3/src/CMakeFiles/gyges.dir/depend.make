@@ -8,7 +8,6 @@ CMakeFiles/gyges.dir/game.c.o: board.h
 CMakeFiles/gyges.dir/game.c.o: game.c
 CMakeFiles/gyges.dir/game.c.o: game.h
 CMakeFiles/gyges.dir/game.c.o: game_driver.h
-CMakeFiles/gyges.dir/game.c.o: input_output.h
 
 CMakeFiles/gyges.dir/input_output.c.o: board.h
 CMakeFiles/gyges.dir/input_output.c.o: input_output.c
