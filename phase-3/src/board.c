@@ -21,7 +21,7 @@ struct piece_move_s {
 	direction dir;
 };
 
-typedef struct piece_move_s piece_move;
+typedef struct piece_move_s *piece_move;
 
 struct board_s
 {
@@ -359,7 +359,7 @@ player next_player(player current_player)
  * 
  *@param dir the direction
  * 
- *@returns the pointer to an array of 2 numbers : {y, x}. If the direction is GOAL or not valid the function will return {0, 0}
+ *@returns the pointer to an array of 2 numbers : {y, x}. If the direction is GOAL or not valid the function will return {-1, -1}
  **/
 int *move(direction dir)
 {
@@ -399,6 +399,14 @@ bool is_move_possible(board game, direction direction)
 	int column = picked_piece_column(game);
 
 	int *dir = move(direction);
+
+	for(int i = 0; i < game->move_done; i++) {
+		piece_move move = game->picked_moves[i];
+
+		if(move->column == column && move->line == line && move->dir == direction) {
+			return false;
+		}
+	}
 
 	if (direction == GOAL)
 	{
@@ -484,6 +492,7 @@ return_code move_piece(board game, direction direction)
 		game->picked_size = NONE;
 		game->picked_owner = NO_PLAYER;
 	}
+	// If the direction is not GOAL
 	else
 	{
 		game->picked_line += dir[0];

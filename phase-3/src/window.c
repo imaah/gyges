@@ -507,10 +507,25 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
 
             for (int i = 0; i <= NB_SIZE; i++)
             {
-                SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i, mid_height + padding / 2 + y_offset, piece_width, piece_width};
-                SDL_Rect around = {position.x - padding / 2, position.y - padding / 2, position.w + padding, position.h + gap + FONT_SIZE / 2.5};
+                SDL_Rect position = {
+                    padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i,
+                    mid_height + padding / 2 + y_offset,
+                    piece_width, 
+                    piece_width
+                };
+                SDL_Rect around = {
+                    position.x - padding / 2, 
+                    position.y - padding / 2, 
+                    position.w + padding, 
+                    position.h + gap + FONT_SIZE / 2.5
+                };
 
-                if (around.x <= mouse.x && mouse.x <= around.x + around.w && around.y <= mouse.y && mouse.y <= around.y + around.h)
+                if (
+                    around.x <= mouse.x &&
+                    mouse.x <= around.x + around.w && 
+                    around.y <= mouse.y && 
+                    mouse.y <= around.y + around.h
+                )
                 {
                     ini_select_size(env, i);
                     break;
