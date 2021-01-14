@@ -15,7 +15,8 @@
  *@brief The board of the game, define it as you wish.
  */
 
-struct piece_move_s {
+struct piece_move_s
+{
 	int line;
 	int column;
 	direction dir;
@@ -31,7 +32,7 @@ struct board_s
 	int picked_line;
 	int picked_column;
 	size picked_size;
-	piece_move * picked_moves;
+	piece_move *picked_moves;
 	int move_done;
 
 	bool south_goal_occupied;
@@ -72,7 +73,7 @@ void clear_game(board game)
 	game->north_goal = NONE;
 	game->south_goal = NONE;
 	game->move_done = 0;
-	game->picked_moves = reallocarray(game->picked_moves, 0, sizeof(struct piece_move_s));
+	game->picked_moves = realloc(game->picked_moves, 0);
 
 	game->movement_left = 0;
 
@@ -340,6 +341,8 @@ return_code pick_piece(board game, player current_player, int line, int column)
 	game->origin_column = column;
 	game->movement_left = piece_size;
 	game->grid[line][column] = NONE;
+	game->move_done = 0;
+
 
 	return OK;
 }
@@ -400,10 +403,12 @@ bool is_move_possible(board game, direction direction)
 
 	int *dir = move(direction);
 
-	for(int i = 0; i < game->move_done; i++) {
+	for (int i = 0; i < game->move_done; i++)
+	{
 		piece_move move = game->picked_moves[i];
 
-		if(move->column == column && move->line == line && move->dir == direction) {
+		if (move->column == column && move->line == line && move->dir == direction)
+		{
 			return false;
 		}
 	}
@@ -449,10 +454,23 @@ void reset_game_move(board game)
 	game->origin_line = -1;
 	game->origin_column = -1;
 
+	game->picked_moves = realloc(game->picked_moves, 0);
+
 	for (int i = 0; i < 3; i++)
 	{
 		game->moves[i] = -1;
 	}
+}
+
+piece_move set_piece_move(int line, int column, direction dir)
+{
+	piece_move piece = malloc(sizeof(struct piece_move_s));
+
+	piece->column = column;
+	piece->line = line;
+	piece->dir = dir;
+
+	return piece;
 }
 
 return_code move_piece(board game, direction direction)
@@ -495,6 +513,11 @@ return_code move_piece(board game, direction direction)
 	// If the direction is not GOAL
 	else
 	{
+		game->picked_moves = realloc(game->picked_moves, (game->move_done + 1) * sizeof(struct piece_move_s));
+
+		game->picked_moves[game->move_done] = set_piece_move(game->picked_line, game->picked_column, direction);
+
+		game->move_done++;
 		game->picked_line += dir[0];
 		game->picked_column += dir[1];
 
@@ -551,33 +574,28 @@ return_code cancel_step(board game)
 		return EMPTY;
 	}
 
-	int last = -4;
-
-	for (int i = 0; i < 3; i++)
+	if (game->move_done > 0)
 	{
-		if (game->moves[i] == -1)
+
+		piece_move last_move = game->picked_moves[game->move_done - 1];
+		game->move_done--;
+		game->picked_line = last_move->line;
+		game->picked_column = last_move->column;
+
+		game->picked_moves = realloc(game->picked_moves, game->move_done * sizeof(struct piece_move_s));
+
+		size hovered_size = get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
+
+		if (hovered_size != NONE)
 		{
-			last = i - 1;
-			break;
+			game->movement_left -= hovered_size;
 		}
-	}
 
-	size hovered_size = get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
-
-	if(hovered_size != NONE) {
-		game->movement_left -= hovered_size;
-	}
-
-	if (last != -4)
-	{
-		// Going one step back
-		direction last_move_direction = game->moves[last];
-		int *dir = move(last_move_direction);
-
-		game->moves[last] = -1;
-		game->picked_line += -dir[0];
-		game->picked_column += -dir[1];
 		game->movement_left++;
+	}
+	else
+	{
+		cancel_movement(game);
 	}
 
 	return OK;
@@ -616,10 +634,14 @@ return_code swap_piece(board game, int target_line, int target_column)
 	return OK;
 }
 
-size get_goal_piece(board game, player player) {
-	if(player == NORTH_P) {
+size get_goal_piece(board game, player player)
+{
+	if (player == NORTH_P)
+	{
 		return game->north_goal;
-	} else {
+	}
+	else
+	{
 		return game->south_goal;
 	}
 }
