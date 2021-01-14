@@ -26,7 +26,7 @@
 #define CELL_SIZE 70
 #define TEXT_COLOR 250, 165, 62
 #define RED_COLOR 255, 15, 3
-#define GREEN_COLOR 169, 71, 71
+#define GREEN_COLOR 71, 169, 71
 #define GRAY_COLOR 150, 150, 150
 #define BLUE_COLOR 0, 198, 255
 #define FONT_SIZE 80

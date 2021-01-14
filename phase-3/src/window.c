@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <strings.h>
 
 #include "window.h"
 #include "board.h"
@@ -49,6 +50,10 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[])
     env->continue_icon = IMG_LoadTexture(ren, CONTINUE_ICON);
     if (!env->swap_icon)
         ERROR("IMG_LoadTexture: %s\n", CONTINUE_ICON);
+
+    SDL_Surface *icon = IMG_Load("assets/icon.png");
+
+    SDL_SetWindowIcon(win, icon);
 
     // Game variables
     env->game = new_game();
@@ -101,9 +106,10 @@ void display_info(Env *env, SDL_Renderer *ren, char *message_content, bool is_er
     // The numbers in this formula were found by trying. We chose the best variables according to what we though was the best result
     SDL_Rect background = {SCREEN_WIDTH / 2 - 5 - strlen(message_content) * (FONT_SIZE / 20), SCREEN_HEIGHT / 4 - FONT_SIZE / 6, strlen(message_content) * (FONT_SIZE / 10) + 10, FONT_SIZE / 4.3};
 
+    // Adapting the y axis if the message is not an error
     if (is_error != true)
     {
-        background.y = SCREEN_HEIGHT / 4 + FONT_SIZE / 6;
+        background.y = SCREEN_HEIGHT / 4 + FONT_SIZE / 6 * 2;
     }
 
     SDL_SetRenderDrawColor(ren, GRAY_COLOR, 128);
@@ -201,7 +207,6 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
             }
             else if (env->current_state == MID_SELECT_PIECE && ((env->current_player == NORTH_P && 5 - line != northmost) || (env->current_player == SOUTH_P && 5 - line != southmost)))
             {
-
                 render_gray_piece(ren, env, piece, line, column);
             }
             else if (5 - line == picked_line && column == picked_column && picked_owner != NO_PLAYER && env->current_state != VICTORY)
@@ -224,7 +229,6 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
 
     if (env->current_state == INI_SELECT_SPOT)
     {
-
         int line;
 
         if (env->current_player == SOUTH_P)
@@ -276,7 +280,7 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
 
             if (around.x <= mouse_x && mouse_x <= around.x + around.w && around.y <= mouse_y && mouse_y <= around.y + around.h)
             {
-                SDL_SetRenderDrawColor(ren, 255, 255, 255, 150);
+                SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
                 SDL_RenderFillRect(ren, &around);
             }
 
@@ -349,11 +353,11 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
 
             if (around.x <= mouse_x && mouse_x <= around.x + around.w && around.y <= mouse_y && mouse_y <= around.y + around.h)
             {
-                SDL_SetRenderDrawColor(ren, 255, 255, 255, 150);
+                SDL_SetRenderDrawColor(ren, 255, 255, 255, 200);
                 SDL_RenderFillRect(ren, &around);
             }
 
-            SDL_Rect text_pos = {position.x, position.y + piece_width, piece_width, FONT_SIZE / 5};
+            SDL_Rect text_pos = {position.x, position.y + piece_width, piece_width, FONT_SIZE / 4};
 
             SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 
@@ -371,6 +375,31 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
     }
     else if (env->current_state == MID_MOVE_PIECE)
     {
+        SDL_Rect remaining_moves_box = {0, 0, 150, FONT_SIZE / 3.4};
+
+        if (env->current_player == NORTH_P) {
+            remaining_moves_box.x = SCREEN_WIDTH - OFFSET - 150;
+            remaining_moves_box.y = OFFSET - FONT_SIZE / 3.4 - 7;
+        } else {
+            remaining_moves_box.x = OFFSET;
+            remaining_moves_box.y = OFFSET + 6 * CELL_SIZE;
+        }
+
+        int remaining_moves = movement_left(env->game);
+
+        char rm_s[30];
+
+        sprintf(rm_s, "%d", remaining_moves);
+
+        SDL_Color color = {GREEN_COLOR};
+
+        if (remaining_moves == 1) {
+            remaining_moves_box.w -= 7; // To get the same width as the plurial string
+            
+            show_text(env, ren, strcat(rm_s, " déplacement restant"), remaining_moves_box, color);
+        } else {
+            show_text(env, ren, strcat(rm_s, " déplacements restants"), remaining_moves_box, color);
+        }
 
         for (int i = 0; i < 5; i++)
         {

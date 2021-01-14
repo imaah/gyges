@@ -15,6 +15,14 @@
  *@brief The board of the game, define it as you wish.
  */
 
+struct piece_move_s {
+	int line;
+	int column;
+	direction dir;
+};
+
+typedef struct piece_move_s piece_move;
+
 struct board_s
 {
 	size grid[DIMENSION][DIMENSION];
@@ -23,6 +31,8 @@ struct board_s
 	int picked_line;
 	int picked_column;
 	size picked_size;
+	piece_move * picked_moves;
+	int move_done;
 
 	bool south_goal_occupied;
 	bool north_goal_occupied;
@@ -61,6 +71,8 @@ void clear_game(board game)
 
 	game->north_goal = NONE;
 	game->south_goal = NONE;
+	game->move_done = 0;
+	game->picked_moves = reallocarray(game->picked_moves, 0, sizeof(struct piece_move_s));
 
 	game->movement_left = 0;
 

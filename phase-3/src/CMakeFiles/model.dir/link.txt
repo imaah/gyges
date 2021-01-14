@@ -1,1 +1,0 @@
-/usr/bin/cc -std=c99 -g -Wall  -rdynamic CMakeFiles/model.dir/main.c.o CMakeFiles/model.dir/window.c.o  -o model  -Wl,-Bstatic -lSDL2main -Wl,-Bdynamic -lSDL2 -lpthread -lSDL2_image -lSDL2_ttf 
