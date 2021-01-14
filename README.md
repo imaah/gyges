@@ -18,7 +18,7 @@ For linux : [`gyges.out`](https://github.com/myimah/gyges/tree/main/phase-1/buil
 For window : pas encore disponible
 
 ## Phase 2 :
-A partir du [``board.h``](https://github.com/myimah/gyges/tree/main/fichiers-fournis/board.h) fourni par Paul DORBEC recréer le [``board.o``](https://github.com/myimah/gyges/tree/main/fichiers-fournis/board.h) de la phase 1.
+A partir du [``board.h``](https://github.com/myimah/gyges/tree/main/fichiers-fournis/board.h) fourni par Paul DORBEC, recréer le [``board.o``](https://github.com/myimah/gyges/tree/main/fichiers-fournis/board.h) de la phase 1.
 
 ### Comment build ?
 
@@ -29,3 +29,12 @@ Pour construire le projet, exécutez ``make`` dans le terminal du dossier du pro
 ### Latest Build :
 For linux : [`gyges.out`](https://github.com/myimah/gyges/tree/main/phase-2/build/gyges.out)  
 For window : pas encore disponible
+
+## Phase 3 :
+A partir de la base de code existante, créer une extension au choix: une interface graphique, un adversaire virtuel ou des tests unitaires. Notre choix: une interface graphique.
+
+### Comment build ?
+
+Voir le fichier cmake pour générer les scripts de build.
+
+Pour construire le projet, exécutez ``cmake . && make`` dans le terminal du dossier du projet.
