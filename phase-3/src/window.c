@@ -104,7 +104,11 @@ void display_info(Env *env, SDL_Renderer *ren, char *message_content, bool is_er
     SDL_Texture *message = SDL_CreateTextureFromSurface(ren, broadcastMessage);
 
     // The numbers in this formula were found by trying. We chose the best variables according to what we though was the best result
-    SDL_Rect background = {SCREEN_WIDTH / 2 - 5 - strlen(message_content) * (FONT_SIZE / 20), SCREEN_HEIGHT / 4 - FONT_SIZE / 6, strlen(message_content) * (FONT_SIZE / 10) + 10, FONT_SIZE / 4.3};
+    SDL_Rect background = {SCREEN_WIDTH / 2 - 5 - strlen(message_content) * (FONT_SIZE / 20),
+                           SCREEN_HEIGHT / 4 - FONT_SIZE / 6,
+                           strlen(message_content) * (FONT_SIZE / 10) + 10,
+                           FONT_SIZE / 4.3
+                          };
 
     // Adapting the y axis if the message is not an error
     if (is_error != true)
@@ -205,11 +209,18 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
             {
                 render_shadow(env, ren, line, column);
             }
-            else if (env->current_state == MID_SELECT_PIECE && ((env->current_player == NORTH_P && 5 - line != northmost) || (env->current_player == SOUTH_P && 5 - line != southmost)))
+            else if ((env->current_state == MID_SELECT_PIECE) && 
+                     ((env->current_player == NORTH_P && 5 - line != northmost) ||
+                      (env->current_player == SOUTH_P && 5 - line != southmost)
+                     )
+                    )
             {
                 render_gray_piece(ren, env, piece, line, column);
             }
-            else if (5 - line == picked_line && column == picked_column && picked_owner != NO_PLAYER && env->current_state != VICTORY)
+            else if ((5 - line == picked_line) &&
+                     (column == picked_column) &&
+                     (picked_owner != NO_PLAYER) && 
+                     (env->current_state != VICTORY))
             {
                 // Checking which player is currently holding the piece, to print it according to his color
                 render_selected_piece(ren, env, picked_size, line, column);
@@ -257,7 +268,11 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
         int mid_width = width / 2;
         int mid_height = SCREEN_HEIGHT / 2 - height / 2;
 
-        SDL_Rect rect = {SCREEN_WIDTH / 2 - width / 2, SCREEN_HEIGHT / 2 - height / 2, width, height};
+        SDL_Rect rect = {SCREEN_WIDTH / 2 - width / 2,
+                         SCREEN_HEIGHT / 2 - height / 2,
+                         width,
+                         height
+                        };
 
         //SDL_SetSurfaceAlphaMod(ren, 150);
         SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
@@ -265,7 +280,11 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
         SDL_RenderFillRect(ren, &rect);
         SDL_Color color = {0, 0, 0, 255};
 
-        SDL_Rect title_rect = {SCREEN_WIDTH / 2 - mid_width + padding, SCREEN_HEIGHT / 2 - height / 2 + padding, width - padding * 2, FONT_SIZE / 2};
+        SDL_Rect title_rect = {SCREEN_WIDTH / 2 - mid_width + padding,
+                               SCREEN_HEIGHT / 2 - height / 2 + padding,
+                               width - padding * 2,
+                               FONT_SIZE / 2
+                              };
 
         show_text(env, ren, "Choix de la taille de la pièce", title_rect, color);
 
@@ -275,16 +294,33 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
         for (int i = 1; i <= NB_SIZE; i++)
         {
             SDL_Rect crop = {0, (i - 1) * 245, 245, 245};
-            SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i, mid_height + padding / 2 + y_offset, piece_width, piece_width};
-            SDL_Rect around = {position.x - padding / 2, position.y - padding / 2, position.w + padding, position.h + gap + FONT_SIZE / 2.5};
+            SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i,
+                                 mid_height + padding / 2 + y_offset,
+                                 piece_width,
+                                 piece_width
+                                };
+            
+            SDL_Rect around = {position.x - padding / 2,
+                               position.y - padding / 2,
+                               position.w + padding,
+                               position.h + gap + FONT_SIZE / 2.5
+                              };
 
-            if (around.x <= mouse_x && mouse_x <= around.x + around.w && around.y <= mouse_y && mouse_y <= around.y + around.h)
+            if ((around.x <= mouse_x) &&
+                (mouse_x <= around.x + around.w) &&
+                (around.y <= mouse_y) &&
+                (mouse_y <= around.y + around.h)
+               )
             {
                 SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
                 SDL_RenderFillRect(ren, &around);
             }
 
-            SDL_Rect text_pos = {position.x, position.y + piece_width + gap, piece_width, FONT_SIZE / 5};
+            SDL_Rect text_pos = {position.x,
+                                 position.y + piece_width + gap,
+                                 piece_width,
+                                 FONT_SIZE / 5
+                                };
             int pieces_available = nb_pieces_available(env->game, i, env->current_player);
 
             SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
@@ -328,7 +364,11 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
         int mid_width = width / 2;
         int mid_height = SCREEN_HEIGHT / 2 - height / 2;
 
-        SDL_Rect rect = {SCREEN_WIDTH / 2 - width / 2, SCREEN_HEIGHT / 2 - height / 2, width, height};
+        SDL_Rect rect = {SCREEN_WIDTH / 2 - width / 2,
+                         SCREEN_HEIGHT / 2 - height / 2,
+                         width,
+                         height
+                        };
 
         //SDL_SetSurfaceAlphaMod(ren, 150);
         SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
@@ -336,7 +376,11 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
         SDL_RenderFillRect(ren, &rect);
         SDL_Color color = {0, 0, 0, 255};
 
-        SDL_Rect title_rect = {SCREEN_WIDTH / 2 - mid_width + padding, SCREEN_HEIGHT / 2 - height / 2, width - padding * 2, FONT_SIZE / 2};
+        SDL_Rect title_rect = {SCREEN_WIDTH / 2 - mid_width + padding,
+                               SCREEN_HEIGHT / 2 - height / 2,
+                               width - padding * 2,
+                               FONT_SIZE / 2
+                              };
 
         show_text(env, ren, "Choix de l'action", title_rect, color);
 
@@ -346,18 +390,34 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
 
         for (int i = 1; i < 3; i++)
         {
-            SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i, mid_height + padding + y_offset, piece_width, piece_width};
-            SDL_Rect around = {position.x - padding / 2, position.y - padding / 2, position.w + padding, position.h + FONT_SIZE / 2.5};
+            SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i,
+                                 mid_height + padding + y_offset,
+                                 piece_width,
+                                 piece_width
+                                };
+            SDL_Rect around = {position.x - padding / 2,
+                               position.y - padding / 2,
+                               position.w + padding,
+                               position.h + FONT_SIZE / 2.5
+                              };
 
             SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 
-            if (around.x <= mouse_x && mouse_x <= around.x + around.w && around.y <= mouse_y && mouse_y <= around.y + around.h)
+            if ((around.x <= mouse_x) &&
+                (mouse_x <= around.x + around.w) &&
+                (around.y <= mouse_y) &&
+                (mouse_y <= around.y + around.h)
+               )
             {
                 SDL_SetRenderDrawColor(ren, 255, 255, 255, 200);
                 SDL_RenderFillRect(ren, &around);
             }
 
-            SDL_Rect text_pos = {position.x, position.y + piece_width, piece_width, FONT_SIZE / 4};
+            SDL_Rect text_pos = {position.x,
+                                 position.y + piece_width,
+                                 piece_width,
+                                 FONT_SIZE / 4
+                                };
 
             SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_NONE);
 
@@ -428,9 +488,17 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
     else if (env->current_state == VICTORY)
     {
         SDL_Color color = {0, 0, 0, 255};
-        SDL_Rect text = {200, 300 - FONT_SIZE / 4, 200, FONT_SIZE / 1.5};
+        SDL_Rect text = {200,
+                         300 - FONT_SIZE / 4,
+                         200,
+                         FONT_SIZE / 1.5
+                        };
 
-        SDL_Rect rect = {SCREEN_WIDTH / 2 - 130, SCREEN_HEIGHT / 2 - FONT_SIZE / 4 - 5, 260, FONT_SIZE / 1.5 + 10};
+        SDL_Rect rect = {SCREEN_WIDTH / 2 - 130,
+                         SCREEN_HEIGHT / 2 - FONT_SIZE / 4 - 5,
+                         260,
+                         FONT_SIZE / 1.5 + 10
+                        };
 
         SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 
@@ -507,25 +575,21 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
 
             for (int i = 0; i <= NB_SIZE; i++)
             {
-                SDL_Rect position = {
-                    padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i,
-                    mid_height + padding / 2 + y_offset,
-                    piece_width, 
-                    piece_width
-                };
-                SDL_Rect around = {
-                    position.x - padding / 2, 
-                    position.y - padding / 2, 
-                    position.w + padding, 
-                    position.h + gap + FONT_SIZE / 2.5
-                };
+                SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i,
+                                     mid_height + padding / 2 + y_offset,
+                                     piece_width,
+                                     piece_width
+                                    };
+                SDL_Rect around = {position.x - padding / 2,
+                                   position.y - padding / 2,
+                                   position.w + padding,
+                                   position.h + gap + FONT_SIZE / 2.5
+                                  };
 
-                if (
-                    around.x <= mouse.x &&
-                    mouse.x <= around.x + around.w && 
-                    around.y <= mouse.y && 
-                    mouse.y <= around.y + around.h
-                )
+                if ((around.x <= mouse.x) &&
+                    (mouse.x <= around.x + around.w) &&
+                    (around.y <= mouse.y) &&
+                    (mouse.y <= around.y + around.h))
                 {
                     ini_select_size(env, i);
                     break;
@@ -543,10 +607,22 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
 
             for (int i = 1; i < 3; i++)
             {
-                SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i, mid_height + padding + y_offset, piece_width, piece_width};
-                SDL_Rect around = {position.x - padding / 2, position.y - padding / 2, position.w + padding, position.h + FONT_SIZE / 2.5};
+                SDL_Rect position = {padding + mid_width - (piece_width * 1.5 + gap) + piece_width * (i + .5) + gap * i,
+                                     mid_height + padding + y_offset,
+                                     piece_width,
+                                     piece_width
+                                    };
+                SDL_Rect around = {position.x - padding / 2,
+                                   position.y - padding / 2,
+                                   position.w + padding,
+                                   position.h + FONT_SIZE / 2.5
+                                  };
 
-                if (around.x <= mouse.x && mouse.x <= around.x + around.w && around.y <= mouse.y && mouse.y <= around.y + around.h)
+                if ((around.x <= mouse.x) &&
+                    (mouse.x <= around.x + around.w) &&
+                    (around.y <= mouse.y) &&
+                    (mouse.y <= around.y + around.h)
+                   )
                 {
                     if (i == 1)
                     {
@@ -573,7 +649,9 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
             return false;
         }
 
-        if (env->clicked_line == picked_piece_line(env->game) && env->clicked_column == picked_piece_column(env->game))
+        if ((env->clicked_line == picked_piece_line(env->game)) &&
+            (env->clicked_column == picked_piece_column(env->game))
+           )
         {
             if (env->current_state == MID_MOVE_PIECE)
             {
