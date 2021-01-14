@@ -28,13 +28,13 @@ Il est interdit au cours d’un même mouvement d’entrer deux fois dans la mê
 
 # Comment jouer
 ## Touches
-#### Clique gauche:
+### Clique gauche:
 Pointer un endroit, y exécuter l'action associée listée ci-dessous
 
-#### Clique gauche après la fin d'une partie:
+### Clique gauche après la fin d'une partie:
 Relancer une partie avec un nouveau plateau
 
-#### Touche echap:
+### Touche echap:
 Quitter l'application
 
 ## Visuels
