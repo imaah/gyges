@@ -28,7 +28,7 @@ Env *init(SDL_Window *win, SDL_Renderer *ren, int argc, char *argv[])
 
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");e
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
     env->shadow_rect = sr;
     TTF_Font *sans = TTF_OpenFont("assets/fonts/Font.ttf", FONT_SIZE);
