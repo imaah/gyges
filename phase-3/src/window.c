@@ -551,6 +551,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
 
     if (e->type == SDL_QUIT)
     {
+    	printf("Program closed.\n Bye 👋\n");
         return true;
     }
     else if (e->type == SDL_MOUSEBUTTONUP) //SDL_GetMouseState / https://wiki.libsdl.org/SDL_GetMouseState
@@ -680,6 +681,7 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
     {
         if (e->key.keysym.sym == SDLK_ESCAPE)
         {
+            printf("Escape key pressed.\n");
             return true;
         }
     }
