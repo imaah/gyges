@@ -560,12 +560,13 @@ return_code cancel_step(board game)
 
 		piece_move last_move = game->picked_moves[game->move_done - 1];
 		game->move_done--;
+
+		size hovered_size = get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
+
 		game->picked_line = last_move->line;
 		game->picked_column = last_move->column;
 
 		game->picked_moves = realloc(game->picked_moves, game->move_done * sizeof(struct piece_move_s));
-
-		size hovered_size = get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
 
 		if (hovered_size != NONE)
 		{
