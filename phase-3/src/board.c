@@ -46,8 +46,6 @@ struct board_s
 
 	int movement_left;
 
-	direction moves[3];
-
 	int pieces_left[NB_PLAYERS][NB_SIZE];
 };
 
@@ -72,15 +70,9 @@ void clear_game(board game)
 
 	game->north_goal = NONE;
 	game->south_goal = NONE;
+
 	game->move_done = 0;
-	game->picked_moves = realloc(game->picked_moves, 0);
-
-	game->movement_left = 0;
-
-	for (int i = 0; i < 3; i++)
-	{
-		game->moves[i] = -1;
-	}
+	game->picked_moves = malloc(sizeof(struct piece_move_s));
 
 	game->origin_line = -1;
 	game->origin_column = -1;
@@ -98,6 +90,17 @@ board new_game()
 	board new_board = malloc(sizeof(struct board_s));
 	clear_game(new_board);
 	return new_board;
+}
+
+piece_move set_piece_move(int line, int column, direction dir)
+{
+	piece_move piece = malloc(sizeof(struct piece_move_s));
+
+	piece->column = column;
+	piece->line = line;
+	piece->dir = dir;
+
+	return piece;
 }
 
 board copy_game(board game)
@@ -124,12 +127,14 @@ board copy_game(board game)
 	copy->south_goal = game->south_goal;
 	copy->north_goal = game->north_goal;
 
-	copy->movement_left = game->movement_left;
+	copy->move_done = game->move_done;
+	copy->picked_moves = malloc(sizeof(game->picked_moves));
 
-	for (int i = 0; i < 3; i++)
-	{
-		copy->moves[i] = game->moves[i];
+	for(int i = 0; i < copy->move_done; i++) {
+		copy->picked_moves[i] = set_piece_move(game->picked_moves[i]->line, game->picked_moves[i]->column, game->picked_moves[i]->dir);
 	}
+
+	copy->movement_left = game->movement_left;
 
 	copy->origin_line = game->origin_line;
 	copy->origin_column = game->origin_column;
@@ -455,22 +460,7 @@ void reset_game_move(board game)
 	game->origin_column = -1;
 
 	game->picked_moves = realloc(game->picked_moves, 0);
-
-	for (int i = 0; i < 3; i++)
-	{
-		game->moves[i] = -1;
-	}
-}
-
-piece_move set_piece_move(int line, int column, direction dir)
-{
-	piece_move piece = malloc(sizeof(struct piece_move_s));
-
-	piece->column = column;
-	piece->line = line;
-	piece->dir = dir;
-
-	return piece;
+	game->move_done = 0;
 }
 
 return_code move_piece(board game, direction direction)
@@ -522,15 +512,6 @@ return_code move_piece(board game, direction direction)
 		game->picked_column += dir[1];
 
 		game->movement_left--;
-
-		for (int i = 0; i < 3; i++)
-		{
-			if (game->moves[i] == -1)
-			{
-				game->moves[i] = direction;
-				break;
-			}
-		}
 	}
 
 	if (game->movement_left == 0)
