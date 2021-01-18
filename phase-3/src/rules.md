@@ -19,7 +19,7 @@ Il est interdit au cours d’un même mouvement d’entrer deux fois dans la mê
 &nbsp;Rappelons que les pièces n’étant pas attribuées à un joueur en particulier, si une pièce est déplacée sur la ligne de départ de l’adversaire, il peut déplacer cette pièce à son tour.
 
 
-**Règle supplémentaire pour joueurs confirmés** - Une règle supplémentaire pour les joueurs confirmés permet une autre option lorsqu’une pièce atteint un emplacement occupé par une autre pièce. Au lieu de continuer son mouvement, la pièce peut prendre la place de la pièce atteinte, etéjecter la pièce à un emplacement quelconque du plateau (sauf les en-buts, bien sur).
+**Règle supplémentaire pour joueurs confirmés** - Une règle supplémentaire pour les joueurs confirmés permet une autre option lorsqu’une pièce atteint un emplacement occupé par une autre pièce. Au lieu de continuer son mouvement, la pièce peut prendre la place de la pièce atteinte, et éjecter la pièce à un emplacement quelconque du plateau (sauf les en-buts, bien sur).
 
 
 
