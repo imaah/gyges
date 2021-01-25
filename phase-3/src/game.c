@@ -125,7 +125,7 @@ void mid_move_piece(Env *env, int line, int column)
                 picked_column = picked_piece_column(env->game);
                 env->moves_made++;
 
-                if (movement_left(env->game) == 0)
+                if (movement_left(env->game) == -1)
                 {
                     env->current_state = MID_SELECT_PIECE;
                     env->current_player = next_player(env->current_player);
@@ -147,7 +147,6 @@ void mid_move_piece(Env *env, int line, int column)
 
 void mid_select_action(Env *env, action action)
 {
-
     if (action == SWAP)
     {
         env->current_state = MID_SWAP_PIECE;

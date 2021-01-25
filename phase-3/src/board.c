@@ -49,6 +49,8 @@ struct board_s
 	int pieces_left[NB_PLAYERS][NB_SIZE];
 };
 
+bool can_move_there(board game, player current_player, int line, int column, direction direction);
+
 void clear_game(board game)
 {
 	for (int i = 0; i < DIMENSION; i++)
@@ -76,6 +78,7 @@ void clear_game(board game)
 
 	game->origin_line = -1;
 	game->origin_column = -1;
+	game->movement_left = -1;
 
 	for (int i = 0; i < NB_SIZE; i++)
 	{
@@ -200,7 +203,15 @@ int southmost_occupied_line(board game)
 	{
 		for (int column = 0; column < DIMENSION; column++)
 		{
-			if (get_piece_size(game, line, column) != NONE)
+			bool has_possible_move = false;
+
+			for(direction dir = 0; dir <= WEST && !has_possible_move; dir++) {
+				if(can_move_there(game, SOUTH_P, line, column, dir)) {
+					has_possible_move = true;
+				}
+			}
+
+			if (get_piece_size(game, line, column) != NONE && has_possible_move)
 			{
 				return line;
 			}
@@ -215,7 +226,15 @@ int northmost_occupied_line(board game)
 	{
 		for (int column = 0; column < DIMENSION; column++)
 		{
-			if (get_piece_size(game, line, column) != NONE)
+			bool has_possible_move = false;
+
+			for(direction dir = 0; dir <= WEST && !has_possible_move; dir++) {
+				if(can_move_there(game, NORTH_P, line, column, dir)) {
+					has_possible_move = true;
+				}
+			}
+
+			if (get_piece_size(game, line, column) != NONE && has_possible_move)
 			{
 				return line;
 			}
@@ -252,7 +271,7 @@ int movement_left(board game)
 
 int nb_pieces_available(board game, size piece, player player)
 {
-	if (player == NO_PLAYER)
+	if (player == NO_PLAYER || !(0 < piece && piece <= NB_SIZE))
 	{
 		return -1;
 	}
@@ -401,11 +420,7 @@ int *move(direction dir)
 	return movement;
 }
 
-bool is_move_possible(board game, direction direction)
-{
-	int line = picked_piece_line(game);
-	int column = picked_piece_column(game);
-
+bool can_move_there(board game, player current_player, int line, int column, direction direction) {
 	int *dir = move(direction);
 
 	for (int i = 0; i < game->move_done; i++)
@@ -421,12 +436,12 @@ bool is_move_possible(board game, direction direction)
 	if (direction == GOAL)
 	{
 		// If the north player is not trying to go in his own goal and he can move...
-		if (picked_piece_owner(game) == NORTH_P && line == 0 && movement_left(game) == 1)
+		if (current_player == NORTH_P && line == 0 && movement_left(game) == 1)
 		{
 			return true;
 		}
 		// Also checking for the south player
-		else if (picked_piece_owner(game) == SOUTH_P && line == 5 && movement_left(game) == 1)
+		else if (current_player == SOUTH_P && line == 5 && movement_left(game) == 1)
 		{
 			return true;
 		}
@@ -448,6 +463,11 @@ bool is_move_possible(board game, direction direction)
 	return false;
 }
 
+bool is_move_possible(board game, direction direction)
+{
+	return can_move_there(game, picked_piece_owner(game), picked_piece_line(game), picked_piece_column(game), direction);
+}
+
 void reset_game_move(board game)
 {
 	// Reseting piece's related variables to what they were before the move
@@ -458,6 +478,7 @@ void reset_game_move(board game)
 	game->picked_size = NONE;
 	game->origin_line = -1;
 	game->origin_column = -1;
+	game->movement_left = -1;
 
 	game->picked_moves = realloc(game->picked_moves, 0);
 	game->move_done = 0;
@@ -466,6 +487,11 @@ void reset_game_move(board game)
 return_code move_piece(board game, direction direction)
 {
 	int *dir = move(direction);
+
+	if(movement_left(game) == 0) 
+	{
+		game->movement_left += get_piece_size(game, picked_piece_line(game), picked_piece_column(game));
+	}
 
 	// Checking all possible errors to throw before moving the piece
 	if (picked_piece_owner(game) == NO_PLAYER)
@@ -522,10 +548,6 @@ return_code move_piece(board game, direction direction)
 		{
 			reset_game_move(game);
 		}
-		else
-		{
-			game->movement_left += hovered_size;
-		}
 	}
 
 	return OK;
@@ -570,10 +592,15 @@ return_code cancel_step(board game)
 
 		if (hovered_size != NONE)
 		{
-			game->movement_left -= hovered_size;
-		}
+			game->movement_left = 1;
+			return OK;
+		} 
 
-		game->movement_left++;
+		if(get_piece_size(game, last_move->line, last_move->column) != NONE) {
+			game->movement_left = 0;
+		} else {
+			game->movement_left++;
+		}
 	}
 	else
 	{

@@ -153,7 +153,7 @@ void announce_winner(board game)
 
 void show_board(board game)
 {
-	printf("\x1b[2J");
+	// printf("\x1b[2J");
 	// Getting the current picked piece to print it in color and differently
 	int picked_line = picked_piece_line(game);
 	int picked_column = picked_piece_column(game);

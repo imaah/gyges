@@ -447,6 +447,10 @@ void render(SDL_Window *win, SDL_Renderer *ren, Env *env)
 
         int remaining_moves = movement_left(env->game);
 
+        if(remaining_moves == 0) {
+            remaining_moves = get_piece_size(env->game, picked_line, picked_column);
+        }
+
         char rm_s[30];
 
         sprintf(rm_s, "%d", remaining_moves);
@@ -664,6 +668,12 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
                 else
                 {
                     cancel_step(env->game);
+
+                    if(movement_left(env->game) == 0) 
+                    {
+                        env->current_state = MID_SELECT_ACTION;
+                    }
+
                     env->moves_made--;
                 }
 
