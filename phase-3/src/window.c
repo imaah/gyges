@@ -564,6 +564,11 @@ bool process(SDL_Window *win, SDL_Renderer *ren, Env *env, SDL_Event *e)
         SDL_GetMouseState(&mouse.x, &mouse.y);
 
         env->clicked_line = 5 - (mouse.y - OFFSET) / CELL_SIZE;
+
+        if(mouse.y < OFFSET) {
+            env->clicked_line = 6;
+        }
+
         env->clicked_column = (mouse.x - OFFSET) / CELL_SIZE;
 
         int width = SCREEN_WIDTH / 2;

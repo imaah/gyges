@@ -104,7 +104,7 @@ void mid_move_piece(Env *env, int line, int column)
 
         if (possible_direction == GOAL)
         {
-            if ((column == 2 || column == 3) && ((env->current_player == NORTH_P && line == -1) || (env->current_player == SOUTH_P && line == 5)))
+            if ((column == 2 || column == 3) && ((env->current_player == NORTH_P && line == -1) || (env->current_player == SOUTH_P && line == 6)))
             {
                 if (is_move_possible(env->game, GOAL))
                 {

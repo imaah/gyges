@@ -435,13 +435,15 @@ bool can_move_there(board game, player current_player, int line, int column, dir
 
 	if (direction == GOAL)
 	{
+		size hovered_size = get_piece_size(game, line, column);
+
 		// If the north player is not trying to go in his own goal and he can move...
-		if (current_player == NORTH_P && line == 0 && movement_left(game) == 1)
+		if (current_player == NORTH_P && line == 0 && (movement_left(game) == 1 || hovered_size == ONE))
 		{
 			return true;
 		}
 		// Also checking for the south player
-		else if (current_player == SOUTH_P && line == 5 && movement_left(game) == 1)
+		else if (current_player == SOUTH_P && line == 5 && (movement_left(game) == 1 || hovered_size == ONE))
 		{
 			return true;
 		}
